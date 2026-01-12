@@ -1,10 +1,13 @@
 # Rajiv's Work Hub
 
+> **User Guide for End Users**  
+> This guide explains how to use the system from a user perspective. For technical documentation, see [`README.md`](README.md).
+
 An AI-powered personal work system that helps capture, organize, and act on tasks, knowledge, and insights through natural conversation.
 
 ## Overview
 
-This system uses specialized agents to help manage work across Notion databases. Each agent has a specific role and expertise, working together to create a seamless workflow.
+This system uses specialized AI agents built with the Agno framework to help manage work across Notion databases. Each agent has a specific role and expertise, working together to create a seamless workflow. Agents use deterministic tools (Python functions) to interact with Notion and other systems, while LLM reasoning guides decision-making.
 
 ---
 
@@ -37,7 +40,10 @@ I'll automatically load the right agent and context.
 - "Customer said they'd pay 2x for automated monitoring"
 - "Add task to review Q4 plan with Reid for Reporting Pod"
 
-**Location:** `.claude/agents/inbox-ingester.md`
+**Location:** 
+- Agent code: `agents/inbox_agent.py`
+- Instructions: `.claude/agents/inbox-ingester.md`
+- Tools: `tools/inbox_agent/`
 
 ---
 
@@ -72,13 +78,22 @@ I'll automatically load the right agent and context.
 
 ---
 
-### 4. Interview Assessor Agent *(Coming Soon)*
+### 4. Interview Assistant Agent
 **Purpose:** Evaluate candidates against PM competency model
 
 **Use for:**
 - Analyzing interview transcripts
 - Comparing candidates
 - Generating structured assessments
+
+**Examples:**
+- "Analyze this interview transcript against our PM competency model"
+- "Assess candidate performance on product sense and execution"
+
+**Location:**
+- Agent code: `agents/interview_assistant_agent.py`
+- Instructions: `.claude/agents/interview-assistant.md`
+- Tools: `tools/interview_assistant_agent/`
 
 ---
 
@@ -187,10 +202,62 @@ If unclear, I'll ask which agent you want to use.
 
 ---
 
+## Technical Architecture
+
+### Agno Framework
+This system is built on [Agno](https://docs.agno.com/), a multi-agent framework that combines:
+- **Agents**: LLM-powered decision makers with instructions and tools
+- **Tools**: Deterministic Python functions for reliable operations (Notion API, URL fetching, etc.)
+- **Router**: Intelligent routing to select the right agent based on user intent
+
+### Project Structure
+```
+/
+├── agents/                    # Agno agent definitions (Python)
+│   ├── inbox_agent.py
+│   ├── task_manager_agent.py
+│   ├── interview_assistant_agent.py
+│   └── router.py             # Routes user input to agents
+│
+├── tools/                     # Deterministic tools organized by agent
+│   ├── inbox_agent/          # create_task, create_resource, create_insight, etc.
+│   ├── task_manager_agent/  # get_daily_review, update_task, analyze_priorities, etc.
+│   └── interview_assistant_agent/  # fetch_page, extract_competencies, etc.
+│
+├── .claude/agents/           # Agent instructions (markdown)
+│   ├── inbox-ingester.md
+│   ├── task-manager.md
+│   └── interview-assistant.md
+│
+├── src/                      # Legacy code (reference)
+│   └── notion_api.py
+│
+└── main.py                   # Entry point for Cursor chat
+```
+
+### How It Works
+1. **User Input**: You type natural language in Cursor chat
+2. **Routing**: `router.py` analyzes your input and selects the appropriate agent
+3. **Agent Execution**: The agent uses its tools and LLM reasoning to complete the task
+4. **Response**: Agent returns a formatted response with what it did
+
+### Invocation
+Agents are invoked through Cursor chat. Simply type your request naturally:
+- "Save this article: [URL]" → Routes to Inbox Agent
+- "What should I work on today?" → Routes to Task Manager Agent
+- "Analyze this interview transcript" → Routes to Interview Assistant Agent
+
+You can also use `main.py` directly:
+```bash
+python main.py "What should I work on today?"
+```
+
 ## System Reference Files
 
 - **System Map** (`.claude/context/notion-taxonomy.md`) - Complete database schemas, workflows, rules
-- **Agent Instructions** (`.claude/agents/*.md`) - Detailed behavior for each agent
+- **Agent Instructions** (`.claude/agents/*.md`) - Detailed behavior for each agent (loaded into agents at runtime)
+- **Agent Code** (`agents/*.py`) - Agno agent definitions with tool registration
+- **Tools** (`tools/*/`) - Deterministic Python functions for each agent
 - **This File** (`CLAUDE.md`) - Quick reference and onboarding
 
 ---
@@ -198,10 +265,11 @@ If unclear, I'll ask which agent you want to use.
 ## Current Status
 
 ✅ **Live:**
-- Inbox Agent (capture tasks, resources, insights)
-- Task Management Agent (review, prioritize, process)
+- Inbox Agent (capture tasks, resources, insights) - Built with Agno
+- Task Management Agent (review, prioritize, process) - Built with Agno
+- Interview Assistant Agent (analyze transcripts) - Built with Agno
 - Resources database in Notion
-- System Audit Log for transparency
+- Agno-based architecture with tools and routing
 
 🚧 **In Progress:**
 - Insights database (schema ready, not created)
@@ -209,9 +277,9 @@ If unclear, I'll ask which agent you want to use.
 
 📋 **Planned:**
 - Context Retrieval Agent
-- Interview Assessor Agent
 - Weekly Planner Agent
 - Artifact Generator Agent
+- AgentOS integration for production runtime (FastAPI + UI)
 
 ---
 
@@ -285,9 +353,12 @@ You: "What am I waiting on?"
 - I'll either do it or tell you which agent to build next
 
 **If you want to extend the system:**
-- New agent ideas go in `.claude/agents/` as `.md` files
-- Follow the pattern of existing agents
+- Create new agent: Add Python file in `agents/` (e.g., `agents/new_agent.py`)
+- Add instructions: Create markdown file in `.claude/agents/` (e.g., `new-agent.md`)
+- Create tools: Add tool modules in `tools/new_agent/` (e.g., `notion_tools.py`)
+- Register agent: Add to `agents/router.py` for routing
 - Reference `.claude/context/notion-taxonomy.md` for database access
+- See `DEVELOPER_GUIDE.md` for detailed instructions (coming soon)
 
 ---
 

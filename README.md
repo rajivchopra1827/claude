@@ -1,58 +1,171 @@
-# Claude Personal OS
+# Rajiv's Work Hub
 
-A local-first, version-controlled system that mirrors your Notion workspace with SQLite for structured data and Markdown for documents.
+> **Technical Reference for Developers**  
+> This README provides technical documentation for developers working on or extending this system. For end-user guidance, see [`CLAUDE.md`](CLAUDE.md).
 
-## Architecture
+An AI-powered personal work system built with the [Agno framework](https://docs.agno.com/) that helps capture, organize, and act on tasks, knowledge, and insights through natural conversation.
 
-### Structured Data (SQLite)
-- **Tasks** - Individual actionable items
-- **Projects** - Containers for related tasks
-- **Resources** - Knowledge base (articles, videos, tools, etc.)
-- **Insights** - Observations, ideas, strategic thoughts
-- **Meeting Transcripts** - Meeting notes
+## Overview
 
-### Document Storage (Markdown)
-- `/data/documents/` - Long-form reference materials organized by domain
-  - `ELT/` - Engineering, Leadership, Technical
-  - `AI/` - AI-related documents
-  - `EPD/` - Engineering & Product
-  - `insights-research/` - Research findings
-  - `personal/` - Personal workspace items
-  - `ai-resources/` - AI-specific resources
-- `/data/meetings/` - Meeting agendas organized by team
-  - `ELT-team/`
-  - `EPD-team/`
-  - `Agency/`
+This system uses specialized AI agents that combine:
+- **LLM reasoning** (Claude Sonnet) for intelligent decision-making
+- **Deterministic tools** (Python functions) for reliable Notion API operations
+- **Natural language interface** for frictionless interaction
 
-## Workflow
+Each agent has a specific role and expertise, working together to create a seamless workflow.
 
-1. **Agents write to local SQLite** - Instant operations, no network latency
-2. **Background sync daemon** - Periodically pushes changes to Notion (every 15-30 min)
-3. **Notion stays as archive** - Long-term storage and sharing source of truth
+## Quick Start
 
-## Files
-
-- `src/database.py` - SQLite schema and database helpers
-- `src/api.py` - Clean API for agents (e.g., `create_task()`, `update_project()`)
-- `src/sync.py` - Background daemon that syncs local changes to Notion
-
-## Getting Started
+### Installation
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Initialize the database
-python src/database.py
-
-# Start the sync daemon
-python src/sync.py
+# Set up environment variables
+# Create env.txt with:
+# NOTION_API_KEY=your_notion_api_key_here
 ```
 
-## Data Source IDs (for Notion sync)
+### Usage
 
-- Tasks: `collection://2d3e6112-fa50-80e9-8a3a-000bc4723604`
-- Projects: `collection://2d3e6112-fa50-8015-8921-000b39445099`
-- Resources: `collection://276649c7-5cd6-46bd-8409-ddfa36addd5d`
-- Insights: `collection://b9105b1d-6bdb-44f2-993b-40e324d1ba28`
-- Meeting Transcripts: `collection://29fe6112-fa50-800c-86a8-000b97eb3fd6`
+**Via Cursor Chat:**
+Simply type your request naturally:
+- "Save this article: [URL]" → Routes to Inbox Agent
+- "What should I work on today?" → Routes to Task Manager Agent
+- "Analyze this interview transcript" → Routes to Interview Assistant Agent
+
+**Via Command Line:**
+```bash
+python main.py "What should I work on today?"
+```
+
+## Available Agents
+
+### 1. Inbox Agent
+**Purpose:** Capture anything quickly - tasks, resources, insights
+
+**Use for:**
+- Saving articles, videos, tools
+- Capturing customer observations, feature ideas, strategic thoughts
+- Creating tasks with proper context
+- Quick voice-dictated captures
+
+**Location:** 
+- Agent code: `agents/inbox_agent.py`
+- Instructions: `.claude/agents/inbox-ingester.md`
+- Tools: `tools/inbox_agent/`
+
+### 2. Task Management Agent
+**Purpose:** Review, prioritize, and manage tasks intelligently
+
+**Use for:**
+- Daily review: "What should I work on today?"
+- Inbox triage: "Help me process my inbox"
+- Checking blockers: "What am I waiting on?"
+- Status updates: "Mark these tasks done..."
+- Weekly planning: "Help me plan this week"
+
+**Location:** 
+- Agent code: `agents/task_manager_agent.py`
+- Instructions: `.claude/agents/task-manager.md`
+- Tools: `tools/task_manager_agent/`
+
+### 3. Interview Assistant Agent
+**Purpose:** Evaluate candidates against PM competency model
+
+**Use for:**
+- Analyzing interview transcripts
+- Comparing candidates
+- Generating structured assessments
+
+**Location:**
+- Agent code: `agents/interview_assistant_agent.py`
+- Instructions: `.claude/agents/interview-assistant.md`
+- Tools: `tools/interview_assistant_agent/`
+
+## Architecture
+
+### Project Structure
+
+```
+/
+├── agents/                    # Agno agent definitions
+│   ├── inbox_agent.py
+│   ├── task_manager_agent.py
+│   ├── interview_assistant_agent.py
+│   └── router.py             # Routes user input to agents
+│
+├── tools/                     # Deterministic tools
+│   ├── common/               # Shared utilities
+│   │   ├── notion_client.py  # get_notion_client, query_database_complete
+│   │   └── constants.py      # Database IDs, shared constants
+│   │
+│   ├── inbox_agent/          # create_task, create_resource, etc.
+│   ├── task_manager_agent/   # get_daily_review, update_task, etc.
+│   └── interview_assistant_agent/  # fetch_competency_model, etc.
+│
+├── .claude/agents/          # Agent instructions (markdown)
+│   ├── inbox-ingester.md
+│   ├── task-manager.md
+│   └── interview-assistant.md
+│
+├── archive/                  # Legacy code (reference only)
+│   └── src/notion_api.py    # Old monolithic API
+│
+└── main.py                  # Entry point
+```
+
+### How It Works
+
+1. **User Input**: You type natural language in Cursor chat or command line
+2. **Routing**: `router.py` analyzes your input and selects the appropriate agent
+3. **Agent Execution**: The agent uses its tools and LLM reasoning to complete the task
+4. **Response**: Agent returns a formatted response with what it did
+
+### Notion Integration
+
+All agents interact with Notion databases:
+- **Tasks** - Actionable next steps
+- **Projects** - High-level ongoing initiatives
+- **Resources** - External content (articles, videos, tools)
+- **Insights** - Raw captures (observations, ideas, screenshots)
+- **Meeting Transcripts** - Interview transcripts (read-only)
+
+Database IDs and shared utilities are centralized in `tools/common/` for easy maintenance.
+
+## Key Features
+
+- **Frictionless Capture**: Just tell the system what you're thinking
+- **Intelligent Routing**: Automatically selects the right agent for your request
+- **Confidence-Based Execution**: Acts when confident (>70%), flags uncertainty otherwise
+- **Context-Aware**: Links related items, suggests projects, infers metadata
+- **Batch Operations**: Process multiple items efficiently
+
+## Documentation
+
+- **CLAUDE.md** - Main user guide and system overview
+- **DEVELOPER_GUIDE.md** - Guide for extending and maintaining the system
+- **.claude/agents/** - Detailed agent instructions
+- **.claude/context/notion-taxonomy.md** - Complete database schemas
+
+## Dependencies
+
+Key dependencies:
+- `agno>=2.0.0` - Agent framework
+- `anthropic>=0.18.0` - Claude API client
+- `notion-client>=2.2.1` - Notion API client
+- `httpx>=0.25.0` - HTTP client for URL fetching
+- `python-dotenv>=1.0.0` - Environment variable loading
+
+## Development
+
+See `DEVELOPER_GUIDE.md` for:
+- Adding new agents
+- Creating new tools
+- Extending existing agents
+- Testing and debugging
+
+## License
+
+Private project - not for distribution.
