@@ -1,122 +1,307 @@
-# Claude Personal OS
+# Rajiv's Work Hub
+
+An AI-powered personal work system that helps capture, organize, and act on tasks, knowledge, and insights through natural conversation.
 
 ## Overview
 
-This is Rajiv's Claude-integrated personal operating system—a local-first workspace that mirrors Notion with SQLite for structured data and Markdown for documents. Claude agents work here to capture inputs, organize knowledge, and manage tasks with zero friction.
+This system uses specialized agents to help manage work across Notion databases. Each agent has a specific role and expertise, working together to create a seamless workflow.
 
-## Architecture
+---
 
-**Structured Data (SQLite)**
-- Tasks - Individual actionable items
-- Projects - Containers for related work
-- Resources - Knowledge base (articles, videos, tools, research)
-- Insights - Observations, ideas, patterns, strategic thoughts
-- Meeting Transcripts - Meeting notes and context
+## Quick Start
 
-**Document Storage (Markdown)**
-- `/data/documents/` - Long-form reference materials by domain
-- `/data/meetings/` - Meeting agendas organized by team
+**Tell me what you want to do:**
 
-## Key Concept: Inbox-First Capture
+- "I need to capture something" or just share a URL, thought, or observation → Inbox Agent
+- "What should I work on today?" or "Help me plan my week" → Task Management Agent
+- "Find everything about [topic]" → Context Retrieval Agent (coming soon)
+- "Assess my interview with [candidate]" → Interview Assessor Agent (coming soon)
 
-When Rajiv provides input (text, URL, screenshot, idea), agents classify it and route to the right place:
-- **Task** → actionable items with deadlines
-- **Resource** → external content to remember/learn
-- **Insight** → observations/ideas/patterns not yet actionable
-- **Project** → container for related work
+I'll automatically load the right agent and context.
 
-## Notion Integration
+---
 
-All databases sync with Notion for long-term storage and sharing. Use these data source IDs for API queries:
+## Available Agents
 
-- Tasks: `collection://2d3e6112-fa50-80e9-8a3a-000bc4723604`
-- Projects: `collection://2d3e6112-fa50-8015-8921-000b39445099`
-- Resources: `collection://276649c7-5cd6-46bd-8409-ddfa36addd5d`
-- Insights: `collection://b9105b1d-6bdb-44f2-993b-40e324d1ba28`
-- Meeting Transcripts: `collection://29fe6112-fa50-800c-86a8-000b97eb3fd6`
+### 1. Inbox Agent
+**Purpose:** Capture anything quickly - tasks, resources, insights
 
-## Work Areas (for tagging/filtering)
+**Use for:**
+- Saving articles, videos, tools
+- Capturing customer observations, feature ideas, strategic thoughts
+- Creating tasks with proper context
+- Quick voice-dictated captures
 
-- **AI Strategy** - AI/ML/LLM/automation/agentic systems
-- **Product** - Product/features/roadmap/EPD
-- **Market & Competitive** - Competitor/market/customer intelligence
-- **Team & Hiring** - Hiring/recruiting/team/org
-- **Technical** - Technical/architecture/engineering
-- **Leadership** - Company/ELT/board/strategy
+**Examples:**
+- "Save this article and remind me to read it: [URL]"
+- "Customer said they'd pay 2x for automated monitoring"
+- "Add task to review Q4 plan with Reid for Reporting Pod"
 
-## Agent Behavior
+**Location:** `agents/inbox-agent.md`
 
-### Inbox Agent
-Routes all incoming items to the right database. See `.claude/agents/inbox-agent.md` for detailed rules.
+---
 
-**Golden Rule:** Bias toward action. If >70% confident, create the entry. Mention confidence if lower.
+### 2. Task Management Agent
+**Purpose:** Review, prioritize, and manage your tasks intelligently
 
-### Task Actionability
-Tasks MUST be concrete next actions:
-- ❌ "Align X decision"
-- ✅ "Send Slack to A, B, C about X decision"
+**Use for:**
+- Daily review: "What should I work on today?"
+- Inbox triage: "Help me process my inbox"
+- Checking blockers: "What am I waiting on?"
+- Status updates: "Mark these tasks done..."
+- Weekly planning: "Help me plan this week"
 
-Help convert vague intentions to specific actions before creating tasks.
+**Examples:**
+- "What should I work on today?"
+- "Process my inbox"
+- "Move hiring tasks to This Week"
+- "Show me overdue tasks"
 
-### Project Priority Limits
-- P1: Maximum 1 active project
-- P2: Maximum 3 active projects
-- P3: Maximum 5 active projects
+**Location:** `agents/task-management-agent.md`
 
-## File Structure
+---
 
+### 3. Context Retrieval Agent *(Coming Soon)*
+**Purpose:** Find and synthesize information across your entire system
+
+**Use for:**
+- Finding related information across databases
+- Answering questions about past work
+- Pulling context for decisions
+- Discovering patterns
+
+---
+
+### 4. Interview Assessor Agent *(Coming Soon)*
+**Purpose:** Evaluate candidates against PM competency model
+
+**Use for:**
+- Analyzing interview transcripts
+- Comparing candidates
+- Generating structured assessments
+
+---
+
+## System Architecture
+
+### Notion Databases
+
+**Core Work Databases:**
+- **Tasks** - Actionable next steps (must be concrete actions)
+- **Projects** - High-level ongoing initiatives  
+- **Resources** - External content (articles, videos, tools)
+- **Insights** - Raw captures (observations, ideas, screenshots)
+- **Meeting Transcripts** - Granola imports (read-only)
+
+**Research & Intelligence:**
+- **Competitor Tracker** - Market intelligence
+- **Customer Conversations** - Research database
+
+**Audit:**
+- **System Audit Log** - Tracks all agent actions and confidence scores
+
+### Work Areas (Tags)
+
+Content is tagged across these dimensions:
+- AI Strategy
+- Product
+- Market & Competitive
+- Team & Hiring
+- Technical
+- Leadership
+
+Multiple tags encouraged (e.g., "AI competitive tool" → AI Strategy + Market + Technical)
+
+---
+
+## Key Principles
+
+### 1. Frictionless Capture
+You shouldn't have to think about where things go or how to structure them. Just tell the system what you're thinking.
+
+### 2. Actionable Tasks
+Tasks must be concrete actions, not vague intentions:
+- ❌ "Align on decision"
+- ✅ "Send email to Reid and Paolo about decision"
+
+### 3. Confidence-Based Execution
+- >70% confidence: System acts, confirms after
+- <70% confidence: System acts but flags for review
+
+### 4. Context Over Hierarchy
+Information is connected through relations and tags, not locked into folders. Search and filter dynamically.
+
+### 5. Intelligence Over Automation
+Agents provide smart suggestions and flag issues, not just mechanical execution.
+
+---
+
+## How to Use This System
+
+### For Quick Captures
+Just start talking - I'll figure out what to do with it:
 ```
-/Users/rajivchopra/Claude/
-├── CLAUDE.md                    (this file)
-├── README.md                    (architecture overview)
-├── .claude/
-│   ├── agents/
-│   │   ├── inbox-agent.md       (detailed inbox agent instructions)
-│   │   └── interview-data-extractor.md
-│   └── context/
-│       └── notion-taxonomy.md   (Notion structure reference)
-├── src/
-│   ├── database.py              (SQLite schema and helpers)
-│   ├── api.py                   (Clean API for agents)
-│   └── sync.py                  (Background sync to Notion)
-└── requirements.txt
+You: "Customer mentioned they need faster reporting"
+Me: [Loads Inbox Agent, captures as insight]
+
+You: "https://youtube.com/watch?v=xyz - save this"  
+Me: [Loads Inbox Agent, creates resource + task]
 ```
+
+### For Task Management
+Be explicit about what you want to do:
+```
+You: "What should I work on today?"
+Me: [Loads Task Management Agent, shows priorities]
+
+You: "Help me process my inbox"
+Me: [Loads Task Management Agent, triages with suggestions]
+```
+
+### For Finding Things
+*(Context Retrieval Agent - coming soon)*
+```
+You: "Show me everything about Reporting Pod"
+Me: [Searches across all databases, presents with context]
+```
+
+---
+
+## Agent Selection Logic
+
+I automatically choose the right agent based on your intent:
+
+**Capture/Save signals** → Inbox Agent
+- URLs, "save this", "remind me", "customer said", [screenshot]
+
+**Task management signals** → Task Management Agent  
+- "what should I work on", "process inbox", "mark done", "show me tasks"
+
+**Search/retrieval signals** → Context Retrieval Agent
+- "find", "show me", "what did we learn", "everything about"
+
+**Assessment signals** → Interview Assessor Agent
+- "assess interview", "evaluate candidate", "compare candidates"
+
+If unclear, I'll ask which agent you want to use.
+
+---
+
+## System Reference Files
+
+- **System Map** (`context/system-map.md`) - Complete database schemas, workflows, rules
+- **Agent Instructions** (`agents/*.md`) - Detailed behavior for each agent
+- **This File** (`CLAUDE.md`) - Quick reference and onboarding
+
+---
+
+## Current Status
+
+✅ **Live:**
+- Inbox Agent (capture tasks, resources, insights)
+- Task Management Agent (review, prioritize, process)
+- Resources database in Notion
+- System Audit Log for transparency
+
+🚧 **In Progress:**
+- Insights database (schema ready, not created)
+- System Audit Log database (schema ready, not created)
+
+📋 **Planned:**
+- Context Retrieval Agent
+- Interview Assessor Agent
+- Weekly Planner Agent
+- Artifact Generator Agent
+
+---
+
+## Tips for Working with Me
+
+### Be Natural
+Just talk normally - you don't need to specify databases, fields, or format things specially:
+- ✅ "Add task to review Q4 plan with Reid next Friday"
+- ❌ "Create entry in Tasks database with Name='Review Q4 plan' and Due='2026-01-17'"
+
+### Batch Operations
+Tell me multiple things at once, I'll handle them:
+- "Mark done: email Paolo, review doc, schedule meeting"
+- "Move all hiring tasks to This Week"
+
+### Trust the System
+If I'm >70% confident, I'll just do it. If something's wrong, you can always correct it later. The audit log tracks everything.
+
+### Give Feedback
+If I misclassify something or make a wrong suggestion, tell me. I learn from the patterns.
+
+### Use Voice
+This system is designed for voice dictation. Use MacWhisper to dictate, paste the text, and I'll handle it.
+
+---
 
 ## Common Workflows
 
-1. **Capture External Resource**
-   - Fetch URL metadata
-   - Infer Type and Work Area
-   - Create Resource entry
-   - If "remind me" → also create Task
+### Morning Routine
+```
+You: "What should I work on today?"
+[Reviews priorities, flags overdue items, suggests focus]
+```
 
-2. **Create Task with Project Context**
-   - Search Projects database for mentioned project
-   - Parse due date
-   - Create Task linked to Project
-   - Confirm
+### Quick Capture
+```
+You: [Paste URL or thought]
+[Automatically routes to right database with proper tags]
+```
 
-3. **Capture Insight/Observation**
-   - Determine Type (Customer Observation, Feature Idea, Strategic Thought, etc.)
-   - Infer Work Area
-   - Create Insight with Status: Inbox
+### Inbox Processing
+```
+You: "Process my inbox"  
+[Suggests project links, statuses, due dates for batch approval]
+```
 
-4. **Task Management**
-   - Convert vague intentions to concrete actions
-   - Default status: Inbox (triage later)
-   - Link to Projects and Resources when context is clear
+### Weekly Planning
+```
+You: "Help me plan this week"
+[Reviews projects, suggests tasks to activate, checks for stuck work]
+```
 
-## Key Rules
+### Follow-ups
+```
+You: "What am I waiting on?"
+[Shows blocked tasks, suggests follow-ups for items >7 days]
+```
 
-- Tasks are actionable next steps, not intentions
-- Default status for new items: Inbox
-- Use Waiting field on Tasks if blocked on someone
-- Link related items (Task → Project/Resource, Resource → Project/Task)
-- Confidence scores on auto-tagged items (especially Work Area inference)
-- All databases sync to Notion as source of truth
+---
 
-## Reference
+## Getting Help
 
-For full Notion structure details, see `.claude/context/notion-taxonomy.md`.
+**If something doesn't work:**
+1. Check the System Audit Log for what happened
+2. Tell me what went wrong - I'll learn from it
+3. Look at `context/system-map.md` for database schemas
 
-For detailed Inbox Agent behavior, see `.claude/agents/inbox-agent.md`.
+**If you're not sure what I can do:**
+- Ask: "What can you help me with?"
+- Tell me what you're trying to accomplish
+- I'll either do it or tell you which agent to build next
+
+**If you want to extend the system:**
+- New agent ideas go in `agents/` as `.md` files
+- Follow the pattern of existing agents
+- Reference `context/system-map.md` for database access
+
+---
+
+## Philosophy
+
+This isn't just a task manager or knowledge base - it's a thinking partner that:
+- **Captures** without friction
+- **Organizes** without your manual effort  
+- **Surfaces** what matters when you need it
+- **Learns** your patterns and priorities
+- **Scales** as you add new capabilities
+
+The goal: You focus on thinking and deciding. The system handles the rest.
+
+---
+
+Ready to work? Just tell me what you need.
