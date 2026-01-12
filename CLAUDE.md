@@ -37,7 +37,7 @@ I'll automatically load the right agent and context.
 - "Customer said they'd pay 2x for automated monitoring"
 - "Add task to review Q4 plan with Reid for Reporting Pod"
 
-**Location:** `agents/inbox-agent.md`
+**Location:** `.claude/agents/inbox-ingester.md`
 
 ---
 
@@ -57,7 +57,7 @@ I'll automatically load the right agent and context.
 - "Move hiring tasks to This Week"
 - "Show me overdue tasks"
 
-**Location:** `agents/task-management-agent.md`
+**Location:** `.claude/agents/task-manager.md`
 
 ---
 
@@ -189,8 +189,8 @@ If unclear, I'll ask which agent you want to use.
 
 ## System Reference Files
 
-- **System Map** (`context/system-map.md`) - Complete database schemas, workflows, rules
-- **Agent Instructions** (`agents/*.md`) - Detailed behavior for each agent
+- **System Map** (`.claude/context/notion-taxonomy.md`) - Complete database schemas, workflows, rules
+- **Agent Instructions** (`.claude/agents/*.md`) - Detailed behavior for each agent
 - **This File** (`CLAUDE.md`) - Quick reference and onboarding
 
 ---
@@ -277,7 +277,7 @@ You: "What am I waiting on?"
 **If something doesn't work:**
 1. Check the System Audit Log for what happened
 2. Tell me what went wrong - I'll learn from it
-3. Look at `context/system-map.md` for database schemas
+3. Look at `.claude/context/notion-taxonomy.md` for database schemas
 
 **If you're not sure what I can do:**
 - Ask: "What can you help me with?"
@@ -285,9 +285,9 @@ You: "What am I waiting on?"
 - I'll either do it or tell you which agent to build next
 
 **If you want to extend the system:**
-- New agent ideas go in `agents/` as `.md` files
+- New agent ideas go in `.claude/agents/` as `.md` files
 - Follow the pattern of existing agents
-- Reference `context/system-map.md` for database access
+- Reference `.claude/context/notion-taxonomy.md` for database access
 
 ---
 
