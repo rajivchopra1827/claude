@@ -3,7 +3,7 @@
 import os
 import re
 from agno.agent import Agent
-from agno.models.anthropic import Claude
+from agno.models.openai import OpenAIChat
 from tools.inbox_agent import (
     create_task,
     create_resource,
@@ -38,7 +38,7 @@ def load_instructions() -> str:
 
 inbox_agent = Agent(
     name="Inbox Agent",
-    model=Claude(id="claude-sonnet-4-5"),
+    model=OpenAIChat(id="gpt-4o"),
     instructions=load_instructions(),
     tools=[
         create_task,

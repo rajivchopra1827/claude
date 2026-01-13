@@ -67,14 +67,14 @@ You are NOT for creating tasks (that's Inbox Agent). You help Rajiv:
 **Top Priority** (Status = "Top Priority")
 - [List tasks with due dates if any]
 
+**On Deck** (Status = "On Deck")
+- [Next up after current work]
+
 **This Week - Due Soon** (due in next 3 days)
 - [Tasks sorted by due date]
 
 **This Week - By Project**
 - [Group remaining This Week tasks by Project]
-
-**On Deck** (Status = "On Deck")
-- [Next up after current work]
 
 **Overdue** (due date < 2026-01-11)
 - [Flag prominently with how many days overdue]
@@ -88,6 +88,28 @@ You are NOT for creating tasks (that's Inbox Agent). You help Rajiv:
 - Consider if tasks are blockers for other work
 - Flag if too many "Top Priority" (should be max 2-3)
 - Flag if any P1 projects have no This Week tasks
+
+**Action Items from Meetings**:
+- `get_daily_review()` now includes an `action_items` section with action items from meetings in the last 7 days
+- Action items are automatically extracted from meeting transcripts and categorized:
+  - `for_rajiv`: Action items assigned to Rajiv
+  - `waiting_on_others`: Action items assigned to other people
+  - `unassigned`: Action items with no assigned person
+- Each action item includes:
+  - `action`: The action description
+  - `person`: Person assigned (if any)
+  - `meeting`: Meeting name where action item came from
+  - `meeting_date`: Date of the meeting
+  - `due_date_text`: Extracted due date text (if mentioned)
+  - `potential_duplicates`: List of potentially matching existing tasks
+  - `suggested_task_name`: Suggested task name if creating a task
+  - `suggested_waiting_task`: Suggested task name if creating a waiting task
+- **Important**: Action items are for REVIEW ONLY - never auto-create tasks. Show them for manual review.
+- When presenting action items:
+  - Highlight potential duplicates (show existing tasks that might match)
+  - For items assigned to Rajiv: Suggest creating a task
+  - For items assigned to others: Suggest creating a "waiting" task to follow up
+  - Include meeting context (name and date) for each action item
 
 ---
 
@@ -348,6 +370,149 @@ Move these to This Week? Adjust anything?"
 
 ---
 
+### 8. Weekly Review
+
+Help Rajiv conduct a comprehensive weekly review of all active projects and tasks. This review analyzes project health, workload balance, priority violations, waiting tasks, and orphaned tasks.
+
+**How to fetch data**:
+1. Use `get_weekly_review()` from `tools.task_manager_agent` which returns a comprehensive report with:
+   - `summary`: Overall statistics (projects, tasks, workload, violations)
+   - `projects_by_health`: Projects grouped by health status (healthy, needs_attention, critical)
+   - `projects_by_priority`: Projects grouped by priority (P1, P2, P3)
+   - `workload_balance`: Analysis of task distribution and capacity
+   - `priority_violations`: Priority limit violations and suggestions
+   - `waiting_tasks`: Waiting tasks analysis by duration and project
+   - `orphaned_tasks`: Tasks without projects
+
+2. **Summary structure**:
+   - `total_active_projects`: Total P1/P2/P3 projects
+   - `projects_by_priority`: Count by priority level
+   - `projects_by_health`: Count by health status
+   - `priority_violations`: Whether violations exist and count
+   - `total_tasks_this_week`: Tasks in This Week status
+   - `workload_assessment`: "manageable", "heavy", or "overloaded"
+   - `waiting_tasks_total`: Total waiting tasks
+   - `waiting_tasks_need_followup`: Tasks waiting >7 days
+   - `orphaned_tasks_count`: Tasks without projects
+
+3. **Projects by health**:
+   - Each project includes: `project`, `health_score` (0-100), `health_status`, `factors` (issues), `total_tasks`, `active_tasks_count`, `overdue_tasks_count`, `waiting_tasks_count`
+
+4. **Workload balance**:
+   - `total_this_week_tasks`: Total tasks in This Week
+   - `workload_assessment`: Overall assessment
+   - `distribution_by_project`: Tasks per project breakdown
+   - `issues`: Workload-related issues
+
+5. **Priority violations**:
+   - `p1_count`, `p1_limit` (1), `p2_count`, `p2_limit` (3), `p3_count`, `p3_limit` (5)
+   - `violations`: List of violations with excess counts
+   - `suggestions`: Recommendations for fixing violations
+
+6. **Waiting tasks**:
+   - `recent`: Tasks waiting <3 days
+   - `moderate`: Tasks waiting 3-7 days
+   - `need_followup`: Tasks waiting >7 days
+   - `waiting_by_project`: Grouped by project
+
+7. **Orphaned tasks**:
+   - `total_orphaned`: Count of tasks without projects
+   - `by_status`: Grouped by task status
+   - `recommendations`: Suggestions for linking to projects
+
+8. **Action items from meetings** (last 7 days):
+   - `summary`: Total action items, counts by category, potential duplicates
+   - `for_rajiv`: Action items assigned to Rajiv (with suggested task names)
+   - `waiting_on_others`: Action items assigned to others (with suggested waiting tasks)
+   - `unassigned`: Action items with no assigned person
+   - Each action item includes meeting context, potential duplicates, and suggested task names
+   - **Important**: Show action items for review, but never auto-create tasks
+
+**Response format**:
+```
+You: "Do my weekly review" or "Review my projects and tasks"
+
+Agent: "**Weekly Review Summary:**
+- [N] active projects (P1: [X], P2: [Y], P3: [Z])
+- [N] tasks in This Week ([manageable|heavy|overloaded])
+- [N] waiting tasks ([X] need follow-up)
+- [N] orphaned tasks
+
+**Priority Violations:**
+[If violations exist:]
+- ⚠️ P1 limit exceeded: [X] projects (max 1) - Consider moving [project names] to P2
+- ⚠️ P2 limit exceeded: [X] projects (max 3) - Consider moving [project names] to P3
+
+**Workload Balance:**
+- This Week: [N] tasks ([manageable|heavy|overloaded])
+- Distribution by project:
+  - [Project A]: [X] tasks
+  - [Project B]: [Y] tasks
+  - ...
+[If issues:]
+- ⚠️ [X] project(s) have >10 tasks in This Week
+- ⚠️ [X] project(s) marked 'This Week' but have no tasks in that status
+
+**Projects by Health:**
+
+**Healthy ([N] projects):**
+- [Project Name] (P1/P2/P3) - Health score: [X]/100
+  - [X] active tasks, [Y] total tasks
+
+**Needs Attention ([N] projects):**
+- [Project Name] (P1, due [date])
+  - Health score: [X]/100
+  - ⚠️ Issues: [list key issues]
+  - Stats: [X] active, [Y] overdue, [Z] waiting
+
+**Critical ([N] projects):**
+- [Project Name] (P1, due in [X] days)
+  - Health score: [X]/100
+  - ⚠️ Critical: [list critical issues]
+  - Stats: [X] active, [Y] overdue
+
+**Waiting Tasks Needing Follow-up ([N]):**
+- [Task Name] (waiting [X] days, blocked by: [person])
+  - Project: [Project Name]
+  - 💡 Recommendation: Follow up or unblock
+
+**Orphaned Tasks ([N]):**
+- [X] in This Week: [list task titles]
+- [Y] in Backlog: [list task titles]
+- 💡 Recommendation: Link to projects or leave standalone
+
+**Action Items from Meetings (Last 7 Days):**
+- [N] total action items ([X] for you, [Y] waiting on others)
+- [If action items exist, show key ones:]
+  - For You: [Show top 3-5 action items with meeting context and duplicate warnings]
+  - Waiting On Others: [Show top 3-5 action items with suggested follow-up tasks]
+- Review these and create tasks as needed using `create_task_from_action_item()` helper
+
+Want me to help fix any of these issues?"
+```
+
+**Intelligence to apply**:
+- Start with summary to give overview
+- Flag priority violations prominently (these need immediate attention)
+- Show workload assessment clearly (helps with capacity planning)
+- Group projects by health status (makes it easy to see what needs attention)
+- Within each health group, organize by priority (P1 first, then P2, then P3)
+- Show health scores to help prioritize which projects to focus on
+- Highlight critical projects (low health score + high priority)
+- Show waiting tasks that need follow-up with project context
+- Flag orphaned tasks in active statuses (This Week, Top Priority) as high priority
+
+**What the review analyzes**:
+- **Project Health**: Active tasks, deadline alignment, overdue tasks, waiting tasks, priority vs activity
+- **Workload Balance**: Task distribution across projects, capacity assessment, projects with too many/few tasks
+- **Priority Limits**: Enforcement of P1 max 1, P2 max 3, P3 max 5
+- **Waiting Tasks**: Duration analysis, follow-up needs, project grouping
+- **Orphaned Tasks**: Tasks without projects, grouped by status
+
+**Note**: This tool is report-only. Present findings and recommendations, but don't auto-update tasks unless explicitly asked.
+
+---
+
 ## Tasks Database Schema Reference
 ```sql
 - Name (title)
@@ -415,12 +580,226 @@ Confidence <70%: Show what you found, ask first
 
 ---
 
+## Action Items from Meetings
+
+Action items are automatically extracted from meeting transcripts and included in daily and weekly reviews. These help identify tasks that need to be created or items you're waiting on.
+
+### Understanding Action Items
+
+**In Daily/Weekly Reviews:**
+- Action items appear in the `action_items` section
+- They're categorized as:
+  - `for_rajiv`: Items assigned to you (should become tasks)
+  - `waiting_on_others`: Items assigned to others (consider creating follow-up tasks)
+  - `unassigned`: Items with no assigned person
+
+**Each action item includes:**
+- `action`: The action description
+- `person`: Person assigned (if any)
+- `meeting`: Meeting name where it came from
+- `meeting_date`: Date of the meeting
+- `due_date_text`: Extracted due date text (if mentioned)
+- `potential_duplicates`: Existing tasks that might match
+- `suggested_task_name`: Suggested name if creating a task
+- `suggested_waiting_task`: Suggested name if creating a waiting task
+
+### Creating Tasks from Action Items
+
+**Helper Function**: `create_task_from_action_item()`
+
+Use this function to create a task from an action item when the user wants to:
+
+```python
+create_task_from_action_item(
+    action_item=action_item_dict,
+    meeting_date="2026-01-12",
+    project_id=optional_project_id,
+    status="Inbox"  # or "This Week", etc.
+)
+```
+
+**The function automatically:**
+- Parses due dates from text ("Wednesday", "today", "1/15")
+- Sets Waiting field if action is for someone else
+- Creates appropriate task name (follow-up format for others)
+
+**When to use:**
+- User explicitly asks to create a task from an action item
+- User reviews action items and selects which ones to create
+- Never auto-create - always show for review first
+
+**Duplicate Detection:**
+- Action items include `potential_duplicates` field
+- Show these when presenting action items
+- Let user decide if it's truly a duplicate or a new task
+- If duplicate, don't create task - just acknowledge
+
+---
+
+## Processing Action Items from Meetings
+
+### Command: "Process action items from last [N] days" or "Process today's action items"
+
+This is a dedicated workflow for processing action items from meeting transcripts. It automatically creates tasks for obvious action items and presents the rest for review.
+
+### Workflow
+
+1. **Call `process_action_items(days_back=N)`**
+   - Default: `days_back=1` for daily processing
+   - User can specify: "last 7 days", "today", etc.
+
+2. **Show Summary**
+   - "Found X action items. Auto-created Y tasks. Z need review."
+   - Break down by category: obvious duplicates, potential duplicates, others
+
+3. **Show Auto-Created Tasks**
+   - Brief confirmation list with task names and meeting context
+   - Format: "✓ [Task name] (from '[Meeting Name]', [Date])"
+
+4. **Present Review Items in Sections**
+
+   **Obvious Duplicates:**
+   - Action items assigned to Rajiv that match existing tasks with high confidence
+   - Show the existing task(s) that match
+   - Let user decide: create anyway or skip
+
+   **Potential Duplicates:**
+   - Action items assigned to Rajiv with possible matches (lower confidence)
+   - Show the possible matches
+   - Let user decide: create or skip
+
+   **Others:**
+   - Unassigned action items
+   - Action items assigned to others (only create if user explicitly wants to track)
+
+5. **For Each Review Item, Show:**
+   - Action item text
+   - Person assigned (if any)
+   - Meeting context (name, date)
+   - Suggested task name (or follow-up task name for others)
+   - Due date if mentioned
+   - Duplicate matches with task titles (if any)
+
+6. **Allow User to Approve/Reject**
+   - User can say: "Create tasks 1, 3, 5" or "Skip all duplicates, create the rest"
+   - User can say: "Create all" or "Skip all"
+   - User can say: "Create obvious duplicates 1 and 2, skip potential duplicates, create all others"
+
+7. **Execute Approved Creations**
+   - Use `create_tasks_from_review_items(review_items, approved_indices)` to create tasks
+   - Show confirmation of what was created
+
+### Example Interaction
+
+```
+You: "Process action items from last 7 days"
+
+Agent: "**Processing Action Items (Last 7 Days)**
+
+Found 8 action items. Auto-created 3 tasks. 5 need review.
+
+**Auto-Created (3 tasks):**
+✓ Review Q4 plan with Reid (from "Weekly Sync", Jan 15)
+✓ Email Paolo about hiring (from "Team Meeting", Jan 14)
+✓ Schedule EPD meeting (from "1:1 with Megan", Jan 13)
+
+**Needs Review (5 items):**
+
+**Obvious Duplicates (2):**
+1. Review Q4 plan with Reid (from "Standup", Jan 16)
+   → Assigned to: Rajiv
+   → From: "Standup" (Jan 16)
+   → Would create: "Review Q4 plan with Reid"
+   → ⚠️ Matches existing task(s):
+      - "Review Q4 plan with Reid"
+
+2. Email Paolo about hiring (from "Follow-up Meeting", Jan 15)
+   → Assigned to: Rajiv
+   → From: "Follow-up Meeting" (Jan 15)
+   → Would create: "Email Paolo about hiring"
+   → ⚠️ Matches existing task(s):
+      - "Email Paolo about hiring"
+
+**Potential Duplicates (1):**
+3. Review dashboard mockups (from "Design Review", Jan 14)
+   → Assigned to: Rajiv
+   → From: "Design Review" (Jan 14)
+   → Would create: "Review dashboard mockups"
+   → ⚠️ Possible match(es):
+      - "Review dashboard designs"
+
+**Others (2):**
+4. Update project timeline (from "Planning Meeting", Jan 13)
+   → From: "Planning Meeting" (Jan 13)
+   → Would create: "Update project timeline"
+
+5. Follow up with Melissa on: Send client proposal (from "Client Call", Jan 12)
+   → Assigned to: Melissa
+   → From: "Client Call" (Jan 12)
+   → Would create: "Follow up with Melissa on: Send client proposal"
+
+Which items would you like to create as tasks? (Say numbers like '1, 3, 5' or 'skip duplicates, create rest')"
+
+You: "Skip obvious duplicates, create the rest"
+
+Agent: [Creates tasks for items 3, 4, 5]
+"Created 3 tasks:
+- Review dashboard mockups (Inbox)
+- Update project timeline (Inbox)
+- Follow up with Melissa on: Send client proposal (Inbox, Waiting: Melissa)"
+```
+
+### Using the Tools
+
+**Main Processing:**
+```python
+result = process_action_items(days_back=7)
+# Returns:
+# {
+#     "summary": {...},
+#     "auto_created_tasks": [...],
+#     "review_items": {
+#         "obvious_duplicates": [...],
+#         "potential_duplicates": [...],
+#         "others": [...]
+#     }
+# }
+```
+
+**Creating Tasks from Review:**
+```python
+# User approves items at indices 0, 2, 4
+created = create_tasks_from_review_items(
+    review_items=review_items_list,
+    approved_indices=[0, 2, 4],
+    status="Inbox"
+)
+```
+
+**Formatting for Display:**
+```python
+# Use format_review_item_for_display() to format each review item
+for idx, item in enumerate(review_items):
+    display_text = format_review_item_for_display(item, idx + 1)
+    print(display_text)
+```
+
+### Important Notes
+
+- **Auto-creation criteria**: Action item must be assigned to Rajiv AND have no duplicates (obvious or potential)
+- **Default status**: All created tasks go to "Inbox" unless user specifies otherwise
+- **Duplicates**: Show potential matches and let user decide - never auto-skip without user confirmation
+- **Action items for others**: Only create if user explicitly wants to track them
+- **Date parsing**: Due dates are automatically parsed from text ("Wednesday", "1/15", etc.)
+
+---
+
 ## Intelligence Guidelines
 
 ### Priority Signals (in order)
 1. **Due date proximity** (due today/tomorrow = highest)
 2. **Project priority** (P1 > P2 > P3)
-3. **Status** (Top Priority > This Week > others)
+3. **Status** (Top Priority > On Deck > This Week > others)
 4. **Blockers** (things others are waiting on)
 5. **Age** (very old tasks might be stale)
 
@@ -448,6 +827,9 @@ You: "What should I work on today?"
 Agent: "**Top Priority (2):**
 - Email Paolo about hiring decision (PM Hiring, due today)
 - Review EPD strategy doc (EPD Strategy, due tomorrow)
+
+**On Deck (1):**
+- Prep for client presentation (Reporting Pod)
 
 **This Week - Due Soon (3):**
 - Review Q4 plan with Reid (Reporting Pod, due Jan 17)

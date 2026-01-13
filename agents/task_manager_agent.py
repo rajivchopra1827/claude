@@ -2,7 +2,7 @@
 
 import os
 from agno.agent import Agent
-from agno.models.anthropic import Claude
+from agno.models.openai import OpenAIChat
 from tools.task_manager_agent import (
     get_daily_review,
     get_inbox_tasks,
@@ -15,8 +15,12 @@ from tools.task_manager_agent import (
     analyze_priorities,
     find_overdue,
     calculate_waiting_duration,
+    get_weekly_review,
+    process_action_items,
+    create_tasks_from_review_items,
+    format_review_item_for_display,
 )
-from tools.inbox_agent.notion_tools import search_projects
+from tools.inbox_agent import search_projects
 
 
 def load_instructions() -> str:
@@ -41,7 +45,7 @@ def load_instructions() -> str:
 
 task_manager_agent = Agent(
     name="Task Manager Agent",
-    model=Claude(id="claude-sonnet-4-5"),
+    model=OpenAIChat(id="gpt-4o"),
     instructions=load_instructions(),
     tools=[
         get_daily_review,
@@ -55,6 +59,10 @@ task_manager_agent = Agent(
         analyze_priorities,
         find_overdue,
         calculate_waiting_duration,
+        get_weekly_review,
+        process_action_items,
+        create_tasks_from_review_items,
+        format_review_item_for_display,
         search_projects,  # For project context
     ],
     markdown=True,

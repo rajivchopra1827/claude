@@ -262,7 +262,7 @@ Multiple tags encouraged (e.g., "AI competitive tool" → AI Strategy + Market +
 │   ├── inbox_agent.py
 │   ├── task_manager_agent.py
 │   ├── interview_assistant_agent.py
-│   └── router.py             # Routes user input to agents
+│   └── orchestrator_team.py  # Agno Team that routes user input to agents
 │
 ├── agents/instructions/      # Agent instructions (markdown)
 │   ├── inbox_agent.md
@@ -290,7 +290,7 @@ Multiple tags encouraged (e.g., "AI competitive tool" → AI Strategy + Market +
 ### How It Works
 
 1. **User Input**: You type natural language in Cursor chat
-2. **Routing**: `router.py` analyzes your input and selects the appropriate agent
+2. **Orchestration**: `orchestrator_team.py` (Agno Team) intelligently routes your input to the appropriate agent
 3. **Agent Execution**: The agent uses its tools and LLM reasoning to complete the task
 4. **Response**: Agent returns a formatted response with what it did
 
@@ -299,7 +299,7 @@ Multiple tags encouraged (e.g., "AI competitive tool" → AI Strategy + Market +
 This system is built on [Agno](https://docs.agno.com/), a multi-agent framework that combines:
 - **Agents**: LLM-powered decision makers with instructions and tools
 - **Tools**: Deterministic Python functions for reliable operations (Notion API, URL fetching, etc.)
-- **Router**: Intelligent routing to select the right agent based on user intent
+- **Orchestrator Team**: Agno Team that uses LLM reasoning to intelligently route requests to specialized agents
 
 ---
 
@@ -414,19 +414,26 @@ my_new_agent = Agent(
 )
 ```
 
-#### Step 4: Add to Router
+#### Step 4: Add to Orchestrator Team
 
-Update `agents/router.py` to route to your agent:
+Update `agents/orchestrator_team.py` to add your agent as a team member:
 
 ```python
 from .my_new_agent import my_new_agent
 
-def route_to_agent(user_input: str) -> "Agent":
-    input_lower = user_input.lower()
-    
-    # My new agent signals
-    if any(keyword in input_lower for keyword in ["my keyword", "another keyword"]):
-        return my_new_agent
+orchestrator_team = Team(
+    # ... existing config ...
+    members=[
+        inbox_agent,
+        task_manager_agent,
+        context_gathering_agent,
+        interview_assistant_agent,
+        my_new_agent,  # Add your agent here
+    ],
+)
+```
+
+Then update `agents/instructions/orchestrator_team.md` to include routing instructions for your new agent.
     
     # ... existing routing logic
 ```
@@ -701,9 +708,9 @@ load_dotenv(dotenv_path=os.path.join(
 - Test tool independently to isolate issue
 
 #### Routing Issues
-- Check router keywords match your use case
-- Add more specific keywords if needed
-- Consider using LLM-based routing for complex cases
+- Update orchestrator team instructions to include routing for your agent
+- The orchestrator team uses LLM reasoning for routing - check team leader instructions in `agents/instructions/orchestrator_team.md`
+- Improve routing by updating the team leader's understanding of when to route to each agent
 
 ### Shared Utilities Reference
 

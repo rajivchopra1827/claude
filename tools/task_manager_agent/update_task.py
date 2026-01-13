@@ -1,4 +1,4 @@
-"""Update tools for Task Manager Agent - updating tasks in Notion."""
+"""Update a task in Notion."""
 
 from typing import List, Dict, Any, Optional
 from tools.common import get_notion_client
@@ -6,13 +6,13 @@ from tools.common import get_notion_client
 
 def update_task(
     task_id: str,
-    status: Optional[str] = None,
-    due_date: Optional[str] = None,
-    completed_date: Optional[str] = None,
-    project_id: Optional[str] = None,
-    waiting: Optional[List[str]] = None,
-    name: Optional[str] = None
-) -> Dict[str, Any]:
+    status: "Optional[str]" = None,
+    due_date: "Optional[str]" = None,
+    completed_date: "Optional[str]" = None,
+    project_id: "Optional[str]" = None,
+    waiting: "Optional[List[str]]" = None,
+    name: "Optional[str]" = None
+) -> "Dict[str, Any]":
     """Update a task in Notion.
     
     Args:
@@ -53,19 +53,3 @@ def update_task(
         page_id=task_id,
         properties=properties
     )
-
-
-def batch_update_tasks(updates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Update multiple tasks in batch.
-    
-    Args:
-        updates: List of update dictionaries, each with task_id and update fields
-    
-    Returns:
-        List of updated task page objects
-    """
-    results = []
-    for update in updates:
-        task_id = update.pop("task_id")
-        results.append(update_task(task_id, **update))
-    return results

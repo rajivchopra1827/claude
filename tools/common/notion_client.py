@@ -97,3 +97,74 @@ def query_database_complete(
         all_results = filtered_results
     
     return all_results
+
+
+def get_page_content(page_id: str) -> str:
+    """Extract all text content from a Notion page (recursively fetches all blocks).
+    
+    Args:
+        page_id: Notion page ID
+    
+    Returns:
+        Combined text content from all blocks in the page
+    """
+    client = get_notion_client()
+    text_parts = []
+    
+    def extract_text_from_block(block: Dict[str, Any]) -> str:
+        """Extract text from a single block."""
+        block_type = block.get("type")
+        if block_type == "paragraph":
+            rich_text = block.get("paragraph", {}).get("rich_text", [])
+        elif block_type == "heading_1":
+            rich_text = block.get("heading_1", {}).get("rich_text", [])
+        elif block_type == "heading_2":
+            rich_text = block.get("heading_2", {}).get("rich_text", [])
+        elif block_type == "heading_3":
+            rich_text = block.get("heading_3", {}).get("rich_text", [])
+        elif block_type == "bulleted_list_item":
+            rich_text = block.get("bulleted_list_item", {}).get("rich_text", [])
+        elif block_type == "numbered_list_item":
+            rich_text = block.get("numbered_list_item", {}).get("rich_text", [])
+        elif block_type == "to_do":
+            rich_text = block.get("to_do", {}).get("rich_text", [])
+        elif block_type == "toggle":
+            rich_text = block.get("toggle", {}).get("rich_text", [])
+        elif block_type == "quote":
+            rich_text = block.get("quote", {}).get("rich_text", [])
+        elif block_type == "callout":
+            rich_text = block.get("callout", {}).get("rich_text", [])
+        else:
+            # For other block types, try to find rich_text
+            rich_text = block.get(block_type, {}).get("rich_text", [])
+        
+        return "".join([item.get("plain_text", "") for item in rich_text])
+    
+    def fetch_blocks_recursive(block_id: str) -> None:
+        """Recursively fetch all blocks starting from a block ID."""
+        cursor = None
+        while True:
+            if cursor:
+                response = client.blocks.children.list(block_id=block_id, start_cursor=cursor)
+            else:
+                response = client.blocks.children.list(block_id=block_id)
+            
+            blocks = response.get("results", [])
+            for block in blocks:
+                # Extract text from this block
+                text = extract_text_from_block(block)
+                if text:
+                    text_parts.append(text)
+                
+                # Check if block has children and fetch them recursively
+                if block.get("has_children", False):
+                    fetch_blocks_recursive(block["id"])
+            
+            if not response.get("has_more"):
+                break
+            cursor = response.get("next_cursor")
+    
+    # Start fetching from the page
+    fetch_blocks_recursive(page_id)
+    
+    return "\n\n".join(text_parts)

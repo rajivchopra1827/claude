@@ -1,7 +1,9 @@
-"""Tools for Interview Assistant Agent - fetching competency models and analyzing transcripts."""
+"""Tools for Interview Assistant Agent - fetching pages and analyzing competencies."""
 
-from .notion_tools import fetch_page, fetch_competency_model
-from .analysis_tools import extract_competencies, map_evidence_to_competencies
+from .fetch_page import fetch_page
+from .fetch_competency_model import fetch_competency_model
+from .extract_competencies import extract_competencies
+from .map_evidence_to_competencies import map_evidence_to_competencies
 
 __all__ = [
     "fetch_page",

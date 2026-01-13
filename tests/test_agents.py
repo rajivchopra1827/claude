@@ -15,10 +15,10 @@ def test_imports():
     print("Testing imports...")
     
     try:
-        from agents.router import route_to_agent
-        print("✓ Router imports OK")
+        from agents.orchestrator_team import orchestrator_team
+        print("✓ Orchestrator team imports OK")
     except Exception as e:
-        print(f"✗ Router import failed: {e}")
+        print(f"✗ Orchestrator team import failed: {e}")
         return False
     
     try:
@@ -42,35 +42,43 @@ def test_imports():
         print(f"✗ Interview assistant agent import failed: {e}")
         return False
     
+    try:
+        from agents.context_gathering_agent import context_gathering_agent
+        print("✓ Context gathering agent imports OK")
+    except Exception as e:
+        print(f"✗ Context gathering agent import failed: {e}")
+        return False
+    
     return True
 
 
-def test_routing():
-    """Test router functionality."""
-    print("\nTesting routing...")
+def test_orchestrator():
+    """Test orchestrator team functionality."""
+    print("\nTesting orchestrator team...")
     
     try:
-        from agents.router import route_to_agent
+        from agents.orchestrator_team import orchestrator_team
         
-        # Test inbox routing
-        agent = route_to_agent("Save this article: https://example.com")
-        assert agent.name == "Inbox Agent", f"Expected Inbox Agent, got {agent.name}"
-        print("✓ Inbox routing works")
+        # Verify team configuration
+        assert orchestrator_team.name == "Work Hub Orchestrator", f"Expected 'Work Hub Orchestrator', got {orchestrator_team.name}"
+        assert len(orchestrator_team.members) == 4, f"Expected 4 members, got {len(orchestrator_team.members)}"
+        assert orchestrator_team.respond_directly == True, "Expected respond_directly=True"
+        assert orchestrator_team.determine_input_for_members == False, "Expected determine_input_for_members=False"
+        print("✓ Orchestrator team configuration correct")
         
-        # Test task manager routing
-        agent = route_to_agent("What should I work on today?")
-        assert agent.name == "Task Manager Agent", f"Expected Task Manager Agent, got {agent.name}"
-        print("✓ Task manager routing works")
-        
-        # Test interview routing
-        agent = route_to_agent("Analyze this interview transcript")
-        assert agent.name == "Interview Assistant Agent", f"Expected Interview Assistant Agent, got {agent.name}"
-        print("✓ Interview assistant routing works")
+        # Verify all agents are members
+        member_names = [m.name for m in orchestrator_team.members]
+        expected_agents = ["Inbox Agent", "Task Manager Agent", "Context Gathering Agent", "Interview Assistant Agent"]
+        for agent_name in expected_agents:
+            assert agent_name in member_names, f"Expected {agent_name} to be a team member"
+        print("✓ All agents are team members")
         
         return True
     except Exception as e:
-        print(f"✗ Routing test failed: {e}")
+        print(f"✗ Orchestrator test failed: {e}")
         return False
+
+
 
 
 def test_tools():
@@ -110,7 +118,7 @@ if __name__ == "__main__":
     
     all_passed &= test_imports()
     all_passed &= test_tools()
-    all_passed &= test_routing()
+    all_passed &= test_orchestrator()
     
     print("\n" + "=" * 50)
     if all_passed:

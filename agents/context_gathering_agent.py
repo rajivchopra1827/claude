@@ -1,14 +1,15 @@
-"""Interview Assistant Agent - analyzes interview transcripts against competency models."""
+"""Context Gathering Agent - finds and summarizes information from Notion."""
 
 import os
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
-from tools.interview_assistant_agent import (
-    fetch_page,
-    extract_competencies,
-    map_evidence_to_competencies,
+from tools.context_gathering_agent import (
+    search_transcripts,
+    get_transcript,
+    get_transcript_content,
+    extract_action_items_from_transcript,
+    extract_action_items_from_notes,
 )
-from tools.interview_assistant_agent import fetch_competency_model
 
 
 def load_instructions() -> str:
@@ -16,13 +17,13 @@ def load_instructions() -> str:
     file_path = os.path.join(
         os.path.dirname(__file__),
         "instructions",
-        "interview_assistant_agent.md"
+        "context_gathering_agent.md"
     )
     
     with open(file_path, 'r') as f:
         content = f.read()
     
-    # Skip frontmatter if present
+    # Skip frontmatter (between --- markers)
     if content.startswith("---"):
         parts = content.split("---", 2)
         if len(parts) >= 3:
@@ -31,15 +32,16 @@ def load_instructions() -> str:
     return content.strip()
 
 
-interview_assistant_agent = Agent(
-    name="Interview Assistant Agent",
+context_gathering_agent = Agent(
+    name="Context Gathering Agent",
     model=OpenAIChat(id="gpt-4o"),
     instructions=load_instructions(),
     tools=[
-        fetch_page,
-        fetch_competency_model,
-        extract_competencies,
-        map_evidence_to_competencies,
+        search_transcripts,
+        get_transcript,
+        get_transcript_content,
+        extract_action_items_from_transcript,
+        extract_action_items_from_notes,
     ],
     markdown=True,
 )
