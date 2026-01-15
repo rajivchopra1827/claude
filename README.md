@@ -1,6 +1,6 @@
-# Rajiv's Work Hub
+# AIPOS - AI Personal Operating System
 
-An AI-powered personal work system built with the [Agno framework](https://docs.agno.com/) that helps capture, organize, and act on tasks, knowledge, and insights through natural conversation.
+An AI-powered personal work system built with the [Agno framework](https://docs.agno.com/) that helps capture, organize, and act on tasks, knowledge, and ideas through natural conversation. AIPOS is your digital butler - efficient, witty, and always one step ahead.
 
 ## Overview
 
@@ -44,7 +44,7 @@ python main.py "What should I work on today?"
 ## Available Agents
 
 ### 1. Inbox Agent
-**Purpose:** Capture anything quickly - tasks, resources, insights
+**Purpose:** Capture anything quickly - tasks, resources, ideas
 
 **Use for:**
 - Saving articles, videos, tools
@@ -112,7 +112,7 @@ python main.py "What should I work on today?"
 Just start talking - I'll figure out what to do with it:
 ```
 You: "Customer mentioned they need faster reporting"
-Me: [Loads Inbox Agent, captures as insight]
+Me: [Loads Inbox Agent, captures as idea]
 
 You: "https://youtube.com/watch?v=xyz - save this"  
 Me: [Loads Inbox Agent, creates resource + task]
@@ -232,7 +232,7 @@ This system is designed for voice dictation. Use MacWhisper to dictate, paste th
 - **Tasks** - Actionable next steps (must be concrete actions)
 - **Projects** - High-level ongoing initiatives  
 - **Resources** - External content (articles, videos, tools)
-- **Insights** - Raw captures (observations, ideas, screenshots)
+- **Ideas** - Raw captures (observations, ideas, screenshots)
 - **Meeting Transcripts** - Granola imports (read-only)
 
 **Research & Intelligence:**
@@ -274,12 +274,12 @@ Multiple tags encouraged (e.g., "AI competitive tool" → AI Strategy + Market +
 │   │   ├── notion_client.py  # get_notion_client, query_database_complete
 │   │   └── constants.py      # Database IDs, shared constants
 │   │
-│   ├── inbox_agent/          # create_task, create_resource, create_insight, etc.
+│   ├── inbox_agent/          # create_task, create_resource, create_idea, etc.
 │   ├── task_manager_agent/   # get_daily_review, update_task, analyze_priorities, etc.
 │   └── interview_assistant_agent/  # fetch_page, extract_competencies, etc.
 │
-├── docs/                     # Reference documentation
-│   └── NOTION_TAXONOMY.md    # Database schemas and workflows
+├── context/                  # Reference documentation and work context
+│   └── notion_taxonomy.md    # Database schemas and workflows
 │
 ├── archive/                  # Legacy code (reference only)
 │   └── src/notion_api.py    # Old monolithic API
@@ -735,7 +735,7 @@ All database IDs and shared constants:
 - `PROJECTS_DB_ID` - Projects database ID
 - `PROJECTS_DATA_SOURCE_ID` - Projects data source ID
 - `RESOURCES_DB_ID` - Resources database ID
-- `INSIGHTS_DB_ID` - Insights database ID
+- `IDEAS_DB_ID` - Ideas database ID
 - `PM_COMPETENCY_MODEL_ID` - PM Competency Model page ID
 
 **When to update constants:**
@@ -747,7 +747,8 @@ All database IDs and shared constants:
 
 ## Reference Documentation
 
-- **`docs/NOTION_TAXONOMY.md`** - Complete database schemas, workflows, and rules
+- **`context/notion_taxonomy.md`** - Complete database schemas, workflows, and rules
+- **`context/rajiv_context.md`** - Rajiv's role, team, strategy, and decision-making context
 - **`agents/instructions/`** - Detailed agent behavior instructions (loaded at runtime)
 
 ---
@@ -771,14 +772,14 @@ pip install -r requirements.txt
 ## Current Status
 
 ✅ **Live:**
-- Inbox Agent (capture tasks, resources, insights) - Built with Agno
+- Inbox Agent (capture tasks, resources, ideas) - Built with Agno
 - Task Management Agent (review, prioritize, process) - Built with Agno
 - Interview Assistant Agent (analyze transcripts) - Built with Agno
 - Resources database in Notion
 - Agno-based architecture with tools and routing
 
 🚧 **In Progress:**
-- Insights database (schema ready, not created)
+- Ideas database (schema ready, not created)
 - System Audit Log database (schema ready, not created)
 
 📋 **Planned:**
@@ -794,7 +795,7 @@ pip install -r requirements.txt
 **If something doesn't work:**
 1. Check the System Audit Log for what happened
 2. Tell me what went wrong - I'll learn from it
-3. Look at `docs/NOTION_TAXONOMY.md` for database schemas
+3. Look at `context/notion_taxonomy.md` for database schemas
 
 **If you're not sure what I can do:**
 - Ask: "What can you help me with?"

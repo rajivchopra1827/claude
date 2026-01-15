@@ -12,6 +12,8 @@ from tools.common.visual_formatter import (
     print_error,
     print_separator,
     format_agent_name,
+    print_aipos_greeting,
+    print_contextual_comment,
 )
 
 
@@ -28,11 +30,52 @@ def handle_chat(user_input: str) -> str:
     return response.content
 
 
+def get_greeting_context() -> dict:
+    """Gather context for startup greeting - task counts and status."""
+    try:
+        from tools.task_manager_agent.get_tasks_by_status import get_tasks_by_status
+        from tools.task_manager_agent import get_overdue_tasks
+        from datetime import date
+        
+        # Get task counts
+        inbox_tasks = get_tasks_by_status("Inbox")
+        overdue_tasks = get_overdue_tasks()
+        
+        # Get tasks completed today
+        from tools.common import query_database_complete, TASKS_DATA_SOURCE_ID
+        today = date.today().isoformat()
+        completed_today = query_database_complete(
+            TASKS_DATA_SOURCE_ID,
+            filter_dict={
+                "and": [
+                    {"property": "Status", "status": {"equals": "Done"}},
+                    {"property": "Completed", "date": {"equals": today}}
+                ]
+            },
+            use_data_source=True
+        )
+        
+        return {
+            "unread_tasks": len(inbox_tasks),
+            "overdue_tasks": len(overdue_tasks),
+            "completed_today": len(completed_today),
+        }
+    except Exception:
+        # If we can't get context, return empty dict - greeting will use fallback
+        return {}
+
+
 def interactive_cli():
     """Run an interactive CLI session with the agents."""
     console.print("[bold cyan]=" * 60)
-    console.print("[bold cyan]🤖 Rajiv's Work Hub - Interactive CLI[/bold cyan]")
+    console.print("[bold cyan]🤖 AIPOS - AI Personal Operating System[/bold cyan]")
     console.print("[bold cyan]=" * 60)
+    console.print()
+    
+    # Gather context for greeting
+    context = get_greeting_context()
+    print_aipos_greeting(context=context)
+    
     console.print("Type your questions or commands. Type 'quit', 'exit', or 'q' to end.\n")
     
     while True:
@@ -43,7 +86,9 @@ def interactive_cli():
             
             # Check for exit commands
             if user_input.lower() in ['quit', 'exit', 'q', 'bye']:
-                console.print("\n[bold]👋 Goodbye![/bold]")
+                console.print()
+                console.print("[bold cyan]AIPOS offline.[/bold cyan]")
+                console.print()
                 break
             
             # Skip empty input
@@ -175,7 +220,9 @@ def interactive_cli():
             print_separator()
             
         except KeyboardInterrupt:
-            console.print("\n\n[bold]👋 Goodbye![/bold]")
+            console.print("\n")
+            console.print("[bold cyan]AIPOS interrupted.[/bold cyan]")
+            console.print()
             break
         except Exception as e:
             print_error(str(e))

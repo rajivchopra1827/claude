@@ -1,14 +1,14 @@
 """Shared constants for Notion database IDs and configuration."""
 
-# Database IDs (from docs/NOTION_TAXONOMY.md)
+# Database IDs (from context/notion_taxonomy.md)
 TASKS_DB_ID = "2d3e6112-fa50-8004-95a7-fb6b41a2bdd8"
 TASKS_DATA_SOURCE_ID = "2d3e6112-fa50-80e9-8a3a-000bc4723604"  # collection:// format
 PROJECTS_DB_ID = "2d3e6112-fa50-8015-8921-000b39445099"
 PROJECTS_DATA_SOURCE_ID = "2d3e6112-fa50-8015-8921-000b39445099"
 RESOURCES_DB_ID = "67b98aee-3f51-4662-bbb9-2fd6dcdaf2ee"
 RESOURCES_DATA_SOURCE_ID = "276649c7-5cd6-46bd-8409-ddfa36addd5d"
-INSIGHTS_DB_ID = "e1c6bd6b-4c8d-4ef2-b0db-c679e408254a"
-INSIGHTS_DATA_SOURCE_ID = "b9105b1d-6bdb-44f2-993b-40e324d1ba28"
+IDEAS_DB_ID = "e1c6bd6b-4c8d-4ef2-b0db-c679e408254a"
+IDEAS_DATA_SOURCE_ID = "b9105b1d-6bdb-44f2-993b-40e324d1ba28"
 MEETING_TRANSCRIPTS_DB_ID = "29fe6112-fa50-8060-9d34-cf9063bc3706"
 MEETING_TRANSCRIPTS_DATA_SOURCE_ID = "29fe6112-fa50-800c-86a8-000b97eb3fd6"
 

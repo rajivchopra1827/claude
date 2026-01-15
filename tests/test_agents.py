@@ -86,7 +86,7 @@ def test_tools():
     print("\nTesting tools...")
     
     try:
-        from tools.inbox_agent import create_task, create_resource, create_insight
+        from tools.inbox_agent import create_task, create_resource, create_idea
         print("✓ Inbox agent tools import OK")
     except Exception as e:
         print(f"✗ Inbox agent tools import failed: {e}")

@@ -1,0 +1,177 @@
+# Rajiv's Work Context
+
+*Last updated: January 2026*
+
+## 1. Role & Scope
+
+**Title:** SVP of AI and Product at Digible  
+**Reports to:** Reid (CEO)
+
+**Accountable for:**
+- **Agency Revenue Growth:** Driving growth through technology that delivers more value to customers
+- **Agency Efficiency & Capacity:** Making operations more scalable and efficient
+- **Tech Revenue:** Building Digible.AI as a new revenue line; sustaining Posts as existing tech revenue
+
+**Winning looks like (12 months):**
+- Reestablished Digible as tech-forward leaders in multifamily marketing
+- Fiona 2.0 launched as differentiated AI-powered marketing assistant
+- Digible.AI validated and positioned as AI thought leader in the space
+
+## 2. Team Landscape
+
+**Direct Reports:**
+- **Megan** - PM, Agency Enablement pod (AI evolution of fulfillment strategy)
+- **Melissa** - Designer (floats across pods)
+- **Kelsey** - Lead PM, Reporting pod (just hired)
+- **[Open] Director of Product** - Will manage above three, report to Rajiv
+
+**Product Org Structure (Pods):**
+- Agency Enablement (Megan)
+- Reporting (Kelsey)
+- Posts (gaps: PM + Designer)
+- Data Platform
+- App Platform
+
+**Key Collaborators:**
+
+*Exec Team:*
+- **Aaron** (CTO)
+- **Reid** (CEO)
+- **Ashley** (CFO)
+- **Lerch** (COO)
+- **Chip** (GM of Agency)
+- **Devik** (Chief of Staff)
+
+*Within EPD:*
+- **Paolo** (Director of Engineering)
+- **Cassidy** (Tech Lead on Reporting)
+
+*Across Org:*
+- **Michelle** (Head of Partnerships/"strategy" team)
+- **Jenny** (Director of Paid Media)
+- **Shannon** (Director of Organic Media)
+- **Kelly** (VP of Client Services)
+
+**Critical Gaps:**
+- Director of Product (active hiring)
+- Posts pod: PM and Designer
+- Digible.AI tiger team: Technical Lead + Multifamily Digital Marketing SME (Rajiv is GM/Product Lead)
+
+## 3. Company Strategy & Rajiv's Pillars
+
+**2026 Company Focus Areas (5 Pillars + Foundation):**
+
+**1. Expand AI Offerings** *(Rajiv owns)*
+- Goal: Deliver Digible.AI by Oct 2026
+- Strategic Priorities:
+  - AI Invention (Digible.AI)
+  - AI Evolution (Fulfillment)
+  - AI Enablement
+
+**2. Continue DPH Buildout** *(Context only)*
+- Goal: Drive a min 40% increase in labor efficiency for level 2 & 3's through DPH
+- Strategic Priorities:
+  - Expansion of DPH
+  - Level Definition, Work Migration & Value Creation Enablement
+  - Role restructuring
+  - Value Creation team
+  - Angels team
+
+**3. Fuel our growth Engine** *(Context only)*
+- Goal: +33% NET Revenue (+$2.3M)
+- Strategic Priorities:
+  - Redefine our GTM (see agency services)
+  - Explore additional areas of growth (e.g. down market)
+  - +TBD # of recurring PMCs
+  - Fully activate account management (CS)
+
+**4. Reinvigorate our Tech Pillar** *(Rajiv owns)*
+- Goal: Release Fiona 2.0 to all customers by October 2026
+- Strategic Priorities:
+  - Fiona 2.0
+  - Direct Posts Product
+
+**5. Calibrate around agency services** *(Context only)*
+- Goal: Scalable delivery of NRJ, Fusion and other modernized offerings
+- Strategic Priorities:
+  - Fusion 1.0
+  - ROAS model
+  - AIO / Search (NRJ)
+  - Other New Renter Journey as explored via Growth strategy
+  - Launch Strategy team
+
+**Foundation: Keeping our business and people infrastructure healthy** *(Context only)*
+- Strategic Priorities: Digible University, Finance Audit, Project Jenga, Feedback Culture
+
+## 4. Strategic Pillars (Rajiv's Scope)
+
+**Company Context:**
+- 150-person bootstrapped, profitable digital marketing agency
+- Specializes in multifamily (apartment buildings)
+- $65M → $90M revenue growth (2024-2025)
+- Core customer needs: hit goals, save time, feel confident things are handled
+- North star mission: pre-eminent lead generation company for real estate in North America
+
+**Tech Strategy (AI + EPD):**
+
+*Mission:* Help apartment marketers hit their goals, save time, and feel confident in their marketing ROI while looking like geniuses to their clients.
+
+*Vision:* A multifamily marketing system that unites AI, data, and human judgment to understand performance → shape strategy → automate execution.
+
+**AI Transformation Framework (3 Pillars):**
+
+1. **AI Disruption (Digible.AI)** - Build first fully AI-native DMA as separate offering; skunkworks tiger team approach; AI-led, human-assisted delivery
+   
+2. **AI Evolution (Fulfillment)** - Transform PMT/Organic from human-led to AI-led, human-assured; rebuild the plane while flying it
+   
+3. **AI Enablement** - Org-wide training, tooling, governance for AI adoption
+
+**AI Ownership:**
+- **AI Disruption:** Rajiv
+- **AI Evolution:** Agency Enablement Pod
+- **AI Enablement:** People team (EX)
+
+**EPD Strategy (3 Pillars):**
+- **Marketing Intelligence:** Evolve reporting into AI-powered proactive strategy
+- **Marketing Automation:** AI-native paid (AEP) and organic (Posts)
+- **Data & Foundation:** Unified data, PMS integrations, reliability
+
+**Key 2026 Milestone:** Fiona 2.0 relaunch
+
+## 5. Success Metrics
+
+**Fiona 2.0 (Marketing Intelligence):**
+- Business: +$750k expansion revenue
+- Proxy: Reporting CSAT from 2.5 → 4.5
+
+**Digible.AI (AI Disruption):**
+- Revenue: $75k MRR by EOY 2026
+- Margin: ≥ X% margin target
+
+**AI Evolution (Fulfillment):**
+- Performance: increase efficiency
+- Capacity: increase Accounts/FTE (optimizations)
+
+**Posts (Marketing Automation - Organic):**
+- Realistic target: $100k direct MRR by EOY 2026
+- Context: Currently ~$250k MRR from Zumper; likely to lose this partnership going into 2027
+
+## 6. Decision-Making Context
+
+**Decision Filters (Reid's framework for all business decisions):**
+1. **Gross Revenue:** $ top line growth
+2. **Margin:** % profitability (impacted by ad spend and labor costs)
+3. **EBITDA:** $ bottom-line profit
+4. **Culture:** Impact on internal culture
+5. **Reputation:** Impact on external reputation
+6. **Connection:** Connection to north star mission (pre-eminent lead generation company for real estate in NA)
+
+**Repeated Trade-offs:**
+- Value creation vs. value capture
+- Building for external clients vs. internal clients
+- Moving fast vs. people feeling comfortable
+
+**Key Constraints:**
+- **Organizational silos:** Poor communication lines across departments (EPD ↔ Agency teams, across Agency teams, even within teams like CS). Lack of operating mechanisms for cross-functional collaboration.
+- **Difficulty saying no:** Hard time setting realistic expectations about what can be done well in a year → risk of "wounding 100 and killing none"
+- **Under capacity:** EPD under capacity despite aggressive timelines

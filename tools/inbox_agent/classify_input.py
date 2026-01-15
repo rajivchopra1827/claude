@@ -1,11 +1,11 @@
-"""Classify user input as TASK, RESOURCE, INSIGHT, or MULTIPLE."""
+"""Classify user input as TASK, RESOURCE, IDEA, or MULTIPLE."""
 
 import re
 from typing import Dict, Any
 
 
 def classify_input(user_input: str) -> Dict[str, Any]:
-    """Classify user input as TASK, RESOURCE, INSIGHT, or MULTIPLE.
+    """Classify user input as TASK, RESOURCE, IDEA, or MULTIPLE.
     
     Args:
         user_input: User's input text
@@ -29,9 +29,9 @@ def classify_input(user_input: str) -> Dict[str, Any]:
     resource_keywords = ["save this", "check out", "read this", "watch this", "found this"]
     has_resource_signal = any(keyword in input_lower for keyword in resource_keywords)
     
-    # Insight signals
-    insight_keywords = ["customer said", "just realized", "idea:", "observation", "pattern", "screenshot"]
-    has_insight_signal = any(keyword in input_lower for keyword in insight_keywords)
+    # Idea signals
+    idea_keywords = ["customer said", "just realized", "idea:", "observation", "pattern", "screenshot"]
+    has_idea_signal = any(keyword in input_lower for keyword in idea_keywords)
     
     # Multiple signals
     has_multiple = (has_url and has_task_signal) or ("remind me to" in input_lower and has_url)
@@ -56,16 +56,16 @@ def classify_input(user_input: str) -> Dict[str, Any]:
             "confidence": 0.85 if has_task_signal else 0.70,
             "urls": []
         }
-    elif has_insight_signal:
+    elif has_idea_signal:
         return {
-            "classification": "INSIGHT",
+            "classification": "IDEA",
             "confidence": 0.80,
             "urls": []
         }
     else:
-        # Default to insight for observations
+        # Default to idea for observations
         return {
-            "classification": "INSIGHT",
+            "classification": "IDEA",
             "confidence": 0.60,
             "urls": []
         }
