@@ -4,6 +4,7 @@ from agno.team import Team
 from agno.models.openai import OpenAIChat
 from tools.common import get_session_storage, load_agent_instructions
 from .inbox_agent import inbox_agent
+from .slack_inbox_agent import slack_inbox_agent
 from .task_manager_agent import task_manager_agent
 from .context_gathering_agent import context_gathering_agent
 from .interview_assistant_agent import interview_assistant_agent
@@ -20,6 +21,7 @@ orchestrator_team = Team(
     model=OpenAIChat(id="gpt-4o"),
     members=[
         inbox_agent,
+        slack_inbox_agent,
         task_manager_agent,
         context_gathering_agent,
         interview_assistant_agent,

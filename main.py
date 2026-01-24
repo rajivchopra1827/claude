@@ -1,5 +1,6 @@
 """Main entry point for Cursor chat integration."""
 
+from typing import Optional
 from agents.orchestrator_team import orchestrator_team
 from agno.run.agent import RunEvent
 from agno.run.team import TeamRunEvent
@@ -28,6 +29,21 @@ def handle_chat(user_input: str) -> str:
     """
     response = orchestrator_team.run(user_input)
     return response.content
+
+
+def get_multiline_input() -> str:
+    """Get input from user using standard Python input().
+    
+    Returns:
+        The input text as a string, stripped of trailing whitespace
+    """
+    try:
+        return input().strip()
+    except EOFError:
+        return ""
+    except KeyboardInterrupt:
+        # Re-raise KeyboardInterrupt so it can be handled by the outer handler
+        raise
 
 
 def get_greeting_context() -> dict:
@@ -65,6 +81,76 @@ def get_greeting_context() -> dict:
         return {}
 
 
+def _extract_tool_name(chunk) -> Optional[str]:
+    """Extract tool name from chunk using multiple fallback strategies.
+    
+    Args:
+        chunk: Event chunk from streaming response
+        
+    Returns:
+        Tool name as string, or None if not found
+    """
+    # Try multiple ways to get tool name
+    if hasattr(chunk, 'tool_name'):
+        return chunk.tool_name
+    elif hasattr(chunk, 'tool'):
+        tool_obj = chunk.tool
+        if isinstance(tool_obj, dict):
+            return tool_obj.get('tool_name') or tool_obj.get('name')
+        elif hasattr(tool_obj, 'tool_name'):
+            return tool_obj.tool_name
+        elif hasattr(tool_obj, 'name'):
+            return tool_obj.name
+        elif hasattr(tool_obj, '__name__'):
+            return tool_obj.__name__
+    return None
+
+
+def _extract_agent_name(chunk, team_members) -> str:
+    """Extract agent name from chunk using multiple fallback strategies.
+    
+    Args:
+        chunk: Event chunk from streaming response
+        team_members: List of team member agents
+        
+    Returns:
+        Agent name as string, defaults to "Agent" if not found
+    """
+    agent_name = None
+    agent_id = None
+    
+    # Try different ways to get agent information
+    if hasattr(chunk, 'agent_id'):
+        agent_id = chunk.agent_id
+    elif hasattr(chunk, 'agent'):
+        agent_id = chunk.agent
+    elif hasattr(chunk, 'run') and hasattr(chunk.run, 'agent'):
+        agent_obj = chunk.run.agent
+        if hasattr(agent_obj, 'name'):
+            agent_name = agent_obj.name
+        elif hasattr(agent_obj, 'id'):
+            agent_id = agent_obj.id
+    
+    # If we have agent_id but not name, try to find name from team members
+    if agent_id and not agent_name:
+        for member in team_members:
+            if hasattr(member, 'id') and str(member.id) == str(agent_id):
+                agent_name = getattr(member, 'name', None)
+                break
+            elif hasattr(member, 'name') and str(member.name) == str(agent_id):
+                agent_name = member.name
+                break
+            elif str(member) == str(agent_id):
+                agent_name = getattr(member, 'name', str(agent_id))
+                break
+    
+    # If we still don't have a name, use agent_id or default
+    if not agent_name:
+        agent_name = agent_id if agent_id else "Agent"
+    
+    return agent_name
+
+
 def interactive_cli():
     """Run an interactive CLI session with the agents."""
     console.print("[bold cyan]=" * 60)
@@ -82,7 +168,10 @@ def interactive_cli():
         try:
             # Get user input
             console.print("[bold bright_white]You:[/bold bright_white] ", end="")
-            user_input = input().strip()
+            try:
+                user_input = get_multiline_input()
+            except (EOFError, KeyboardInterrupt):
+                raise
             
             # Check for exit commands
             if user_input.lower() in ['quit', 'exit', 'q', 'bye']:
@@ -119,42 +208,14 @@ def interactive_cli():
                 
                 # Handle tool call started (both team and agent level)
                 if chunk.event in [TeamRunEvent.tool_call_started, RunEvent.tool_call_started]:
-                    tool_name = None
-                    # Try multiple ways to get tool name
-                    if hasattr(chunk, 'tool_name'):
-                        tool_name = chunk.tool_name
-                    elif hasattr(chunk, 'tool'):
-                        tool_obj = chunk.tool
-                        if isinstance(tool_obj, dict):
-                            tool_name = tool_obj.get('tool_name') or tool_obj.get('name')
-                        elif hasattr(tool_obj, 'tool_name'):
-                            tool_name = tool_obj.tool_name
-                        elif hasattr(tool_obj, 'name'):
-                            tool_name = tool_obj.name
-                        elif hasattr(tool_obj, '__name__'):
-                            tool_name = tool_obj.__name__
-                    
+                    tool_name = _extract_tool_name(chunk)
                     if tool_name and tool_name not in tool_calls_shown:
                         print_tool_call(tool_name)
                         tool_calls_shown.add(tool_name)
                 
                 # Handle tool call completed
                 if chunk.event in [TeamRunEvent.tool_call_completed, RunEvent.tool_call_completed]:
-                    tool_name = None
-                    # Try multiple ways to get tool name
-                    if hasattr(chunk, 'tool_name'):
-                        tool_name = chunk.tool_name
-                    elif hasattr(chunk, 'tool'):
-                        tool_obj = chunk.tool
-                        if isinstance(tool_obj, dict):
-                            tool_name = tool_obj.get('tool_name') or tool_obj.get('name')
-                        elif hasattr(tool_obj, 'tool_name'):
-                            tool_name = tool_obj.tool_name
-                        elif hasattr(tool_obj, 'name'):
-                            tool_name = tool_obj.name
-                        elif hasattr(tool_obj, '__name__'):
-                            tool_name = tool_obj.__name__
-                    
+                    tool_name = _extract_tool_name(chunk)
                     if tool_name:
                         print_tool_success(tool_name)
                     else:
@@ -162,38 +223,7 @@ def interactive_cli():
                 
                 # Handle agent name and content when we detect an agent is responding
                 if chunk.event == RunEvent.run_content:
-                    # Try to get agent name/ID from various possible attributes
-                    agent_name = None
-                    agent_id = None
-                    
-                    # Try different ways to get agent information
-                    if hasattr(chunk, 'agent_id'):
-                        agent_id = chunk.agent_id
-                    elif hasattr(chunk, 'agent'):
-                        agent_id = chunk.agent
-                    elif hasattr(chunk, 'run') and hasattr(chunk.run, 'agent'):
-                        agent_obj = chunk.run.agent
-                        if hasattr(agent_obj, 'name'):
-                            agent_name = agent_obj.name
-                        elif hasattr(agent_obj, 'id'):
-                            agent_id = agent_obj.id
-                    
-                    # If we have agent_id but not name, try to find name from team members
-                    if agent_id and not agent_name:
-                        for member in orchestrator_team.members:
-                            if hasattr(member, 'id') and str(member.id) == str(agent_id):
-                                agent_name = getattr(member, 'name', None)
-                                break
-                            elif hasattr(member, 'name') and str(member.name) == str(agent_id):
-                                agent_name = member.name
-                                break
-                            elif str(member) == str(agent_id):
-                                agent_name = getattr(member, 'name', str(agent_id))
-                                break
-                    
-                    # If we still don't have a name, use agent_id or default
-                    if not agent_name:
-                        agent_name = agent_id if agent_id else "Agent"
+                    agent_name = _extract_agent_name(chunk, orchestrator_team.members)
                     
                     # Show agent header if this is a new agent responding
                     if agent_name and agent_name != current_agent_name:

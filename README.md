@@ -5,7 +5,7 @@ An AI-powered personal work system built with the [Agno framework](https://docs.
 ## Overview
 
 This system uses specialized AI agents that combine:
-- **LLM reasoning** (Claude Sonnet) for intelligent decision-making
+- **LLM reasoning** (GPT-4o and Claude Sonnet) for intelligent decision-making
 - **Deterministic tools** (Python functions) for reliable Notion API operations
 - **Natural language interface** for frictionless interaction
 
@@ -32,12 +32,25 @@ pip install -r requirements.txt
 Simply type your request naturally:
 - "Save this article: [URL]" → Routes to Inbox Agent
 - "What should I work on today?" → Routes to Task Manager Agent
+- "Find transcripts about AI strategy" → Routes to Context Gathering Agent
 - "Analyze this interview transcript" → Routes to Interview Assistant Agent
+- "How productive was I last month?" → Routes to Productivity Analysis Agent
 
 **Via Command Line:**
+
+One-shot mode (single command):
 ```bash
 python main.py "What should I work on today?"
 ```
+
+Interactive mode (conversational session):
+```bash
+python main.py --interactive
+# or
+python main.py -i
+```
+
+In interactive mode, you'll see a formatted CLI with agent responses, tool calls, and a greeting showing your current task status.
 
 ---
 
@@ -87,7 +100,29 @@ python main.py "What should I work on today?"
 
 ---
 
-### 3. Interview Assistant Agent
+### 3. Context Gathering Agent
+**Purpose:** Find and retrieve information from your workspace
+
+**Use for:**
+- Searching meeting transcripts and notes
+- Finding historical context and past discussions
+- Retrieving information across databases
+- Answering "what do we know about X" questions
+
+**Examples:**
+- "Find transcripts about AI strategy"
+- "What did we discuss in meetings last week?"
+- "What do we know about competitive monitoring?"
+- "Search for meeting notes with Megan"
+
+**Location:**
+- Agent code: `agents/context_gathering_agent.py`
+- Instructions: `agents/instructions/context_gathering_agent.md`
+- Tools: `tools/context_gathering_agent/`
+
+---
+
+### 4. Interview Assistant Agent
 **Purpose:** Evaluate candidates against PM competency model
 
 **Use for:**
@@ -103,6 +138,29 @@ python main.py "What should I work on today?"
 - Agent code: `agents/interview_assistant_agent.py`
 - Instructions: `agents/instructions/interview_assistant_agent.md`
 - Tools: `tools/interview_assistant_agent/`
+
+---
+
+### 5. Productivity Analysis Agent
+**Purpose:** Analyze productivity metrics, patterns, and trends
+
+**Use for:**
+- Understanding productivity patterns and completion rates
+- Comparing productivity across time periods
+- Identifying bottlenecks and work patterns
+- Analyzing project progress and productivity by project
+
+**Examples:**
+- "How productive was I last month?"
+- "Which projects am I making the most progress on?"
+- "What patterns do you see in my work?"
+- "Compare my productivity this month vs. last month"
+- "Show me my productivity trends"
+
+**Location:**
+- Agent code: `agents/productivity_analysis_agent.py`
+- Instructions: `agents/instructions/productivity_analysis_agent.md`
+- Tools: `tools/productivity_analysis_agent/`
 
 ---
 
@@ -128,6 +186,26 @@ You: "Help me process my inbox"
 Me: [Loads Task Management Agent, triages with suggestions]
 ```
 
+### For Finding Information
+Ask naturally about what you're looking for:
+```
+You: "What do we know about competitive monitoring?"
+Me: [Loads Context Gathering Agent, searches transcripts and databases]
+
+You: "Find transcripts about AI strategy"
+Me: [Loads Context Gathering Agent, searches and summarizes findings]
+```
+
+### For Productivity Analysis
+Ask about your work patterns and progress:
+```
+You: "How productive was I last month?"
+Me: [Loads Productivity Analysis Agent, analyzes metrics and trends]
+
+You: "Which projects am I making the most progress on?"
+Me: [Loads Productivity Analysis Agent, compares project productivity]
+```
+
 ### Agent Selection Logic
 
 I automatically choose the right agent based on your intent:
@@ -138,8 +216,14 @@ I automatically choose the right agent based on your intent:
 **Task management signals** → Task Management Agent  
 - "what should I work on", "process inbox", "mark done", "show me tasks"
 
-**Assessment signals** → Interview Assistant Agent
-- "assess interview", "evaluate candidate", "compare candidates"
+**Information retrieval signals** → Context Gathering Agent
+- "find", "search", "what do we know about", "retrieve", "get transcripts"
+
+**Interview assessment signals** → Interview Assistant Agent
+- "assess interview", "evaluate candidate", "compare candidates", "analyze transcript"
+
+**Productivity analysis signals** → Productivity Analysis Agent
+- "how productive", "productivity trends", "compare productivity", "productivity report", "which projects"
 
 If unclear, I'll ask which agent you want to use.
 
@@ -197,6 +281,18 @@ You: "Help me plan this week"
 ```
 You: "What am I waiting on?"
 [Shows blocked tasks, suggests follow-ups for items >7 days]
+```
+
+### Finding Information
+```
+You: "What do we know about competitive monitoring?"
+[Context Gathering Agent searches transcripts and databases, summarizes findings]
+```
+
+### Productivity Analysis
+```
+You: "How productive was I last month?"
+[Productivity Analysis Agent analyzes completion rates, trends, and patterns]
 ```
 
 ---
@@ -261,30 +357,41 @@ Multiple tags encouraged (e.g., "AI competitive tool" → AI Strategy + Market +
 ├── agents/                    # Agno agent definitions (Python)
 │   ├── inbox_agent.py
 │   ├── task_manager_agent.py
+│   ├── context_gathering_agent.py
 │   ├── interview_assistant_agent.py
+│   ├── productivity_analysis_agent.py
 │   └── orchestrator_team.py  # Agno Team that routes user input to agents
 │
 ├── agents/instructions/      # Agent instructions (markdown)
 │   ├── inbox_agent.md
 │   ├── task_manager_agent.md
-│   └── interview_assistant_agent.md
+│   ├── context_gathering_agent.md
+│   ├── interview_assistant_agent.md
+│   ├── productivity_analysis_agent.md
+│   └── orchestrator_team.md
 │
 ├── tools/                     # Deterministic tools organized by agent
 │   ├── common/               # Shared utilities
 │   │   ├── notion_client.py  # get_notion_client, query_database_complete
-│   │   └── constants.py      # Database IDs, shared constants
+│   │   ├── constants.py      # Database IDs, shared constants
+│   │   ├── session_storage.py # Session management
+│   │   ├── get_rajiv_context.py # Context retrieval
+│   │   └── visual_formatter.py # CLI formatting
 │   │
 │   ├── inbox_agent/          # create_task, create_resource, create_idea, etc.
 │   ├── task_manager_agent/   # get_daily_review, update_task, analyze_priorities, etc.
-│   └── interview_assistant_agent/  # fetch_page, extract_competencies, etc.
+│   ├── context_gathering_agent/  # search_transcripts, get_transcript, extract_action_items, etc.
+│   ├── interview_assistant_agent/  # fetch_page, extract_competencies, etc.
+│   └── productivity_analysis_agent/  # calculate_productivity_metrics, analyze_time_patterns, etc.
 │
 ├── context/                  # Reference documentation and work context
-│   └── notion_taxonomy.md    # Database schemas and workflows
+│   ├── notion_taxonomy.md    # Database schemas and workflows
+│   └── rajiv_context.md      # Personal context and decision-making framework
 │
-├── archive/                  # Legacy code (reference only)
-│   └── src/notion_api.py    # Old monolithic API
+├── data/                     # Local data storage
+│   └── sessions.db          # SQLite database for agent sessions
 │
-└── main.py                   # Entry point for Cursor chat
+└── main.py                   # Entry point for Cursor chat and CLI
 ```
 
 ### How It Works
@@ -308,9 +415,10 @@ This system is built on [Agno](https://docs.agno.com/), a multi-agent framework 
 ### Architecture Overview
 
 This system uses the [Agno framework](https://docs.agno.com/) to build AI agents that combine:
-- **LLM reasoning** (Claude Sonnet) for decision-making
+- **LLM reasoning** (GPT-4o and Claude Sonnet) for decision-making
 - **Deterministic tools** (Python functions) for reliable operations
 - **Instructions** (markdown files) for agent behavior
+- **Session storage** (SQLite) for conversation history and context
 
 ### Adding a New Agent
 
@@ -378,33 +486,22 @@ Create `agents/my_new_agent.py`:
 
 import os
 from agno.agent import Agent
-from agno.models.anthropic import Claude
+from agno.models.openai import OpenAIChat  # or from agno.models.anthropic import Claude
 from tools.my_new_agent import create_thing, update_thing
+from tools.common import get_session_storage, load_agent_instructions
 
 
 def load_instructions() -> str:
-    """Load instructions from markdown file, skipping frontmatter."""
-    file_path = os.path.join(
-        os.path.dirname(__file__),
-        "instructions",
-        "my_new_agent.md"
-    )
-    
-    with open(file_path, 'r') as f:
-        content = f.read()
-    
-    # Skip frontmatter if present
-    if content.startswith("---"):
-        parts = content.split("---", 2)
-        if len(parts) >= 3:
-            return parts[2].strip()
-    
-    return content.strip()
+    """Load instructions from markdown file with Rajiv context injected."""
+    return load_agent_instructions('my_new_agent')
 
 
 my_new_agent = Agent(
     name="My New Agent",
-    model=Claude(id="claude-sonnet-4-5"),
+    model=OpenAIChat(id="gpt-4o"),  # or Claude(id="claude-sonnet-4-5")
+    db=get_session_storage(table_name="my_new_agent_sessions"),
+    add_history_to_context=True,
+    num_history_runs=3,
     instructions=load_instructions(),
     tools=[
         create_thing,
@@ -646,26 +743,20 @@ print(result)
 
 #### Loading Instructions
 
-All agents use the same pattern:
+All agents use the shared utility to load instructions with Rajiv context injected:
 
 ```python
+from tools.common import load_agent_instructions
+
 def load_instructions() -> str:
-    file_path = os.path.join(
-        os.path.dirname(__file__),
-        "instructions",
-        "agent_name.md"
-    )
-    
-    with open(file_path, 'r') as f:
-        content = f.read()
-    
-    # Skip frontmatter
-    if content.startswith("---"):
-        parts = content.split("---", 2)
-        if len(parts) >= 3:
-            return parts[2].strip()
-    
-    return content.strip()
+    """Load instructions from markdown file with Rajiv context injected."""
+    return load_agent_instructions('agent_name')
+```
+
+This automatically:
+- Loads the instruction file from `agents/instructions/agent_name.md`
+- Injects Rajiv's context from `context/rajiv_context.md` if needed
+- Handles frontmatter parsing
 ```
 
 #### Notion Client Singleton
@@ -684,16 +775,15 @@ The client is initialized once in `tools/common/notion_client.py` and reused acr
 
 #### Environment Variables
 
-Load from `env.txt`:
+Environment variables are loaded automatically by the shared Notion client and other utilities. Create `env.txt` in the project root with:
 
-```python
-from dotenv import load_dotenv
-
-load_dotenv(dotenv_path=os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    "env.txt"
-))
 ```
+NOTION_API_KEY=your_notion_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here  # If using GPT-4o
+ANTHROPIC_API_KEY=your_anthropic_api_key_here  # If using Claude
+```
+
+The shared utilities handle loading these automatically - you don't need to manually load them in your tools.
 
 ### Troubleshooting
 
@@ -727,6 +817,10 @@ load_dotenv(dotenv_path=os.path.join(
 - `use_data_source=True` uses data source ID instead of database ID (for multi-source databases)
 - Handles pagination cursor automatically
 
+**`get_page_content(page_id: str) -> str`**
+- Retrieves the full content of a Notion page
+- Returns formatted text content
+
 #### `tools/common/constants.py`
 
 All database IDs and shared constants:
@@ -735,13 +829,39 @@ All database IDs and shared constants:
 - `PROJECTS_DB_ID` - Projects database ID
 - `PROJECTS_DATA_SOURCE_ID` - Projects data source ID
 - `RESOURCES_DB_ID` - Resources database ID
+- `RESOURCES_DATA_SOURCE_ID` - Resources data source ID
 - `IDEAS_DB_ID` - Ideas database ID
+- `IDEAS_DATA_SOURCE_ID` - Ideas data source ID
+- `MEETING_TRANSCRIPTS_DB_ID` - Meeting Transcripts database ID
+- `MEETING_TRANSCRIPTS_DATA_SOURCE_ID` - Meeting Transcripts data source ID
+- `DOCUMENTS_PAGE_ID` - Documents folder page ID
 - `PM_COMPETENCY_MODEL_ID` - PM Competency Model page ID
 
 **When to update constants:**
 - If a database ID changes in Notion
 - If a new shared database is added
 - If a new shared page ID is needed
+
+#### `tools/common/session_storage.py`
+
+**`get_session_storage(table_name: str) -> Database`**
+- Returns Agno Database instance for session storage
+- Uses SQLite database at `data/sessions.db`
+- Each agent should use a unique table name (e.g., `"inbox_agent_sessions"`)
+
+#### `tools/common/load_agent_instructions.py`
+
+**`load_agent_instructions(agent_name: str) -> str`**
+- Loads agent instructions from `agents/instructions/{agent_name}.md`
+- Injects Rajiv context if needed
+- Handles frontmatter parsing automatically
+
+#### `tools/common/get_rajiv_context.py`
+
+**`get_rajiv_context() -> str`**
+- Retrieves Rajiv's personal context and decision-making framework
+- Loads from `context/rajiv_context.md`
+- Used by agents to understand Rajiv's role, team, and priorities
 
 ---
 
@@ -758,9 +878,11 @@ All database IDs and shared constants:
 Key dependencies:
 - `agno>=2.0.0` - Agent framework
 - `anthropic>=0.18.0` - Claude API client
+- `openai>=1.0.0` - OpenAI API client (for GPT-4o)
 - `notion-client>=2.2.1` - Notion API client
 - `httpx>=0.25.0` - HTTP client for URL fetching
 - `python-dotenv>=1.0.0` - Environment variable loading
+- `rich>=13.0.0` - Rich text and beautiful formatting for CLI
 
 Install with:
 ```bash
@@ -772,18 +894,21 @@ pip install -r requirements.txt
 ## Current Status
 
 ✅ **Live:**
-- Inbox Agent (capture tasks, resources, ideas) - Built with Agno
-- Task Management Agent (review, prioritize, process) - Built with Agno
-- Interview Assistant Agent (analyze transcripts) - Built with Agno
+- **Inbox Agent** - Captures tasks, resources, and ideas
+- **Task Management Agent** - Reviews, prioritizes, and manages tasks
+- **Context Gathering Agent** - Finds and retrieves information from workspace
+- **Interview Assistant Agent** - Analyzes candidates against PM competency model
+- **Productivity Analysis Agent** - Analyzes productivity metrics, patterns, and trends
+- **Orchestrator Team** - Intelligently routes requests to appropriate agents
+- All agents built with Agno framework
 - Resources database in Notion
-- Agno-based architecture with tools and routing
+- Session storage for conversation history
 
 🚧 **In Progress:**
 - Ideas database (schema ready, not created)
 - System Audit Log database (schema ready, not created)
 
 📋 **Planned:**
-- Context Retrieval Agent
 - Weekly Planner Agent
 - Artifact Generator Agent
 - AgentOS integration for production runtime (FastAPI + UI)

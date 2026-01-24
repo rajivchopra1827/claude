@@ -9,7 +9,7 @@ def create_resource(
     url: Optional[str] = None,
     resource_type: Optional[str] = None,
     area: Optional[str] = None,
-    status: str = "To Review",
+    status: str = "Inbox",
     summary: Optional[str] = None,
     source: Optional[str] = None,
     project_ids: Optional[List[str]] = None,
@@ -22,7 +22,7 @@ def create_resource(
         url: Resource URL
         resource_type: Type (Article, Video, Podcast, Paper/Report, Tool/Product, Book, Other)
         area: Area (AI, EPD, Organization, Research & Insight, Leadership)
-        status: Status (default: "To Review")
+        status: Status (default: "Inbox")
         summary: Summary text
         source: Where found
         project_ids: List of related project IDs

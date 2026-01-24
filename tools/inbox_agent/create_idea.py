@@ -1,8 +1,16 @@
 """Create a new idea in Notion."""
 
 from typing import List, Dict, Any, Optional
+import json
 from tools.common import get_notion_client, IDEAS_DB_ID
 
+# #region agent log
+DEBUG_LOG_PATH = "/Users/rajivchopra/Claude/.cursor/debug.log"
+def _debug_log(location, message, data, hypothesis_id):
+    import time
+    entry = {"location": location, "message": message, "data": data, "timestamp": int(time.time()*1000), "sessionId": "debug-session", "hypothesisId": hypothesis_id}
+    with open(DEBUG_LOG_PATH, "a") as f: f.write(json.dumps(entry) + "\n")
+# #endregion
 
 def create_idea(
     title: str,
@@ -31,7 +39,22 @@ def create_idea(
     Returns:
         Created idea page object with id and url
     """
+    # #region agent log
+    import os
+    api_key = os.getenv("NOTION_API_KEY", "")
+    _debug_log("create_idea.py:entry", "Function called", {"title": title, "idea_type": idea_type, "IDEAS_DB_ID": IDEAS_DB_ID, "api_key_prefix": api_key[:10] if api_key else "MISSING", "api_key_suffix": api_key[-4:] if api_key else "MISSING"}, "A,D")
+    # #endregion
+    
     client = get_notion_client()
+    
+    # #region agent log
+    # Test if we can retrieve the database before trying to create
+    try:
+        db_info = client.databases.retrieve(database_id=IDEAS_DB_ID)
+        _debug_log("create_idea.py:db_check", "Database retrieved successfully", {"db_title": db_info.get("title", [{}])[0].get("plain_text", "unknown"), "db_id": IDEAS_DB_ID}, "A,B,C")
+    except Exception as db_err:
+        _debug_log("create_idea.py:db_check_failed", "Failed to retrieve database", {"error": str(db_err), "db_id": IDEAS_DB_ID}, "A,B,C")
+    # #endregion
     
     properties = {
         "Title": {
@@ -66,10 +89,23 @@ def create_idea(
     if confidence_score is not None:
         properties["Confidence Score"] = {"number": confidence_score}
     
-    page = client.pages.create(
-        parent={"database_id": IDEAS_DB_ID},
-        properties=properties
-    )
+    # #region agent log
+    _debug_log("create_idea.py:before_create", "About to create page", {"database_id": IDEAS_DB_ID, "properties_keys": list(properties.keys())}, "A,B")
+    # #endregion
+    
+    try:
+        page = client.pages.create(
+            parent={"database_id": IDEAS_DB_ID},
+            properties=properties
+        )
+        # #region agent log
+        _debug_log("create_idea.py:after_create", "Page created successfully", {"page_id": page.get("id"), "page_url": page.get("url")}, "A,B,C")
+        # #endregion
+    except Exception as create_err:
+        # #region agent log
+        _debug_log("create_idea.py:create_failed", "Page creation failed", {"error": str(create_err), "error_type": type(create_err).__name__}, "A,B,C,D")
+        # #endregion
+        raise
     
     # Add content if provided (requires separate update)
     if content:

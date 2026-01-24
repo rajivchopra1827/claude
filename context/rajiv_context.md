@@ -59,6 +59,44 @@
 
 ## 3. Company Strategy & Rajiv's Pillars
 
+**Company Priorities & Strategies:**
+
+**P0 (Highest Priority):**
+1. Accelerate DPH expansion
+2. Optimize Workforce
+3. Fiona 2.0
+4. Posts
+5. Modify organic offerings
+6. Explore additional areas of growth
+
+**P1:**
+1. AI Evolution - Fulfillment (low hanging fruit)
+2. Workflow Integrity
+3. ROVI
+4. Fusion 1.0
+5. Qualified Leads
+6. Fully Activate AMs
+
+**P2:**
+1. Digible.AI - if we didn't have for Digible summit, it'd be crushing but it's not existential for our revenue (we don't know how much we'll be rewarded as a business)
+2. Redefine GTM
+3. AI Search Results
+
+**Others:**
+
+*P1:*
+- Offline Lead Conversions
+- Willowbridge
+
+*P2:*
+- Digible Compliance Blueprint
+- Financial data insights
+- Gong (to rest of org)
+- Capacity Modeling
+- PMC Profitability
+- Appfolio (move to Q2)
+- EPD x Agency Request Recalibration
+
 **2026 Company Focus Areas (5 Pillars + Foundation):**
 
 **1. Expand AI Offerings** *(Rajiv owns)*
