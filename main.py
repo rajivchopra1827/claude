@@ -1,7 +1,7 @@
 """Main entry point for Cursor chat integration."""
 
 from typing import Optional
-from agents.orchestrator_team import orchestrator_team
+from task_management.agents.orchestrator_team import orchestrator_team
 from agno.run.agent import RunEvent
 from agno.run.team import TeamRunEvent
 from tools.common.visual_formatter import (
@@ -49,8 +49,8 @@ def get_multiline_input() -> str:
 def get_greeting_context() -> dict:
     """Gather context for startup greeting - task counts and status."""
     try:
-        from tools.task_manager_agent.get_tasks_by_status import get_tasks_by_status
-        from tools.task_manager_agent import get_overdue_tasks
+        from task_management.tools.task_manager_agent.get_tasks_by_status import get_tasks_by_status
+        from task_management.tools.task_manager_agent import get_overdue_tasks
         from datetime import date
         
         # Get task counts

@@ -15,3 +15,11 @@ MEETING_TRANSCRIPTS_DATA_SOURCE_ID = "29fe6112-fa50-800c-86a8-000b97eb3fd6"
 # Page IDs
 DOCUMENTS_PAGE_ID = "156e6112-fa50-80bd-9f05-f5a7e6068354"
 PM_COMPETENCY_MODEL_ID = "232e6112fa50802692b6ef43788abce5"
+
+# Director of Product Scorecard (database, not page)
+SCORECARD_DB_ID = "2c4e6112-fa50-815f-bb90-eec5320b4d01"
+SCORECARD_DATA_SOURCE_ID = "2c4e6112-fa50-815f-8317-000bebd3c01a"
+SCORECARD_URL = "https://www.notion.so/digible/2c4e6112fa50815fbb90eec5320b4d01"
+
+# Legacy alias for backward compatibility
+SCORECARD_PAGE_ID = SCORECARD_DB_ID

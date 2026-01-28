@@ -14,10 +14,15 @@ from .constants import (
     MEETING_TRANSCRIPTS_DATA_SOURCE_ID,
     DOCUMENTS_PAGE_ID,
     PM_COMPETENCY_MODEL_ID,
+    SCORECARD_PAGE_ID,
+    SCORECARD_DB_ID,
+    SCORECARD_DATA_SOURCE_ID,
+    SCORECARD_URL,
 )
 from .session_storage import get_session_storage
 from .get_rajiv_context import get_rajiv_context
 from .load_agent_instructions import load_agent_instructions
+from .parse_strategic_priorities import get_strategic_priorities, get_priority_by_person
 
 __all__ = [
     "get_notion_client",
@@ -26,6 +31,8 @@ __all__ = [
     "get_session_storage",
     "get_rajiv_context",
     "load_agent_instructions",
+    "get_strategic_priorities",
+    "get_priority_by_person",
     "TASKS_DB_ID",
     "TASKS_DATA_SOURCE_ID",
     "PROJECTS_DB_ID",
@@ -38,4 +45,8 @@ __all__ = [
     "MEETING_TRANSCRIPTS_DATA_SOURCE_ID",
     "DOCUMENTS_PAGE_ID",
     "PM_COMPETENCY_MODEL_ID",
+    "SCORECARD_PAGE_ID",
+    "SCORECARD_DB_ID",
+    "SCORECARD_DATA_SOURCE_ID",
+    "SCORECARD_URL",
 ]

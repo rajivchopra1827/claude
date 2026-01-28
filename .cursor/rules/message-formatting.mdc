@@ -1,0 +1,40 @@
+---
+description: Formatting rules for draft messages and communication
+alwaysApply: true
+---
+
+# Message Formatting
+
+When drafting messages (Slack, email, or any communication), write them in plain text without markdown blockquote formatting.
+
+## Don't Use Blockquotes for Draft Messages
+
+❌ **BAD** - Using ">" blockquote syntax:
+
+```
+> Hey team,
+> 
+> I'm canceling tomorrow's meeting.
+> 
+> Thanks
+```
+
+✅ **GOOD** - Plain text:
+
+```
+Hey team,
+
+I'm canceling tomorrow's meeting.
+
+Thanks
+```
+
+## Why
+
+- Blockquotes make it harder to copy/paste
+- They add unnecessary visual formatting
+- Plain text is easier to work with
+
+## When to Use Blockquotes
+
+Only use blockquotes (">") when quoting someone else's text for context or reference, not for drafting new messages.

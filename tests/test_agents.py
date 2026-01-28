@@ -22,28 +22,28 @@ def test_imports():
         return False
     
     try:
-        from agents.inbox_agent import inbox_agent
+        from task_management.agents.inbox_agent import inbox_agent
         print("✓ Inbox agent imports OK")
     except Exception as e:
         print(f"✗ Inbox agent import failed: {e}")
         return False
     
     try:
-        from agents.task_manager_agent import task_manager_agent
+        from task_management.agents.task_manager_agent import task_manager_agent
         print("✓ Task manager agent imports OK")
     except Exception as e:
         print(f"✗ Task manager agent import failed: {e}")
         return False
     
     try:
-        from agents.interview_assistant_agent import interview_assistant_agent
+        from task_management.agents.interview_assistant_agent import interview_assistant_agent
         print("✓ Interview assistant agent imports OK")
     except Exception as e:
         print(f"✗ Interview assistant agent import failed: {e}")
         return False
     
     try:
-        from agents.context_gathering_agent import context_gathering_agent
+        from task_management.agents.context_gathering_agent import context_gathering_agent
         print("✓ Context gathering agent imports OK")
     except Exception as e:
         print(f"✗ Context gathering agent import failed: {e}")
@@ -57,18 +57,18 @@ def test_orchestrator():
     print("\nTesting orchestrator team...")
     
     try:
-        from agents.orchestrator_team import orchestrator_team
+        from task_management.agents.orchestrator_team import orchestrator_team
         
         # Verify team configuration
-        assert orchestrator_team.name == "Work Hub Orchestrator", f"Expected 'Work Hub Orchestrator', got {orchestrator_team.name}"
-        assert len(orchestrator_team.members) == 4, f"Expected 4 members, got {len(orchestrator_team.members)}"
+        assert orchestrator_team.name == "AIPOS", f"Expected 'AIPOS', got {orchestrator_team.name}"
+        assert len(orchestrator_team.members) == 6, f"Expected 6 members, got {len(orchestrator_team.members)}"
         assert orchestrator_team.respond_directly == True, "Expected respond_directly=True"
         assert orchestrator_team.determine_input_for_members == False, "Expected determine_input_for_members=False"
         print("✓ Orchestrator team configuration correct")
         
         # Verify all agents are members
         member_names = [m.name for m in orchestrator_team.members]
-        expected_agents = ["Inbox Agent", "Task Manager Agent", "Context Gathering Agent", "Interview Assistant Agent"]
+        expected_agents = ["Inbox Agent", "Slack Inbox Agent", "Task Manager Agent", "Context Gathering Agent", "Interview Assistant Agent", "Productivity Analysis Agent"]
         for agent_name in expected_agents:
             assert agent_name in member_names, f"Expected {agent_name} to be a team member"
         print("✓ All agents are team members")
@@ -86,21 +86,21 @@ def test_tools():
     print("\nTesting tools...")
     
     try:
-        from tools.inbox_agent import create_task, create_resource, create_idea
+        from task_management.tools.inbox_agent import create_task, create_resource, create_idea
         print("✓ Inbox agent tools import OK")
     except Exception as e:
         print(f"✗ Inbox agent tools import failed: {e}")
         return False
     
     try:
-        from tools.task_manager_agent import get_daily_review, update_task
+        from task_management.tools.task_manager_agent import get_daily_review, update_task
         print("✓ Task manager agent tools import OK")
     except Exception as e:
         print(f"✗ Task manager agent tools import failed: {e}")
         return False
     
     try:
-        from tools.interview_assistant_agent import fetch_page
+        from task_management.tools.interview_assistant_agent import fetch_page
         print("✓ Interview assistant agent tools import OK")
     except Exception as e:
         print(f"✗ Interview assistant agent tools import failed: {e}")

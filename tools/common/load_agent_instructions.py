@@ -17,7 +17,7 @@ def load_agent_instructions(agent_name: str) -> str:
     # Get the agents directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(os.path.dirname(current_dir))
-    instructions_dir = os.path.join(project_root, "agents", "instructions")
+    instructions_dir = os.path.join(project_root, "task_management", "instructions")
     
     # Load agent-specific instructions
     instruction_file = os.path.join(instructions_dir, f"{agent_name}.md")

@@ -8,7 +8,7 @@ from unittest.mock import Mock, MagicMock, patch, call
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from tools.slack_inbox_agent.process_slack_messages import (
+from task_management.tools.slack_inbox_agent.process_slack_messages import (
     _get_user_name,
     _build_enhanced_text,
     _log_error_to_debug_file,
@@ -97,7 +97,7 @@ class TestLogErrorToDebugFile(unittest.TestCase):
     """Test _log_error_to_debug_file() helper function."""
     
     @patch('builtins.open', create=True)
-    @patch('tools.slack_inbox_agent.process_slack_messages.time')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.time')
     @patch('json.dumps')
     def test_log_error_success(self, mock_json_dumps, mock_time, mock_open):
         """Test successful error logging."""
@@ -133,13 +133,13 @@ class TestProcessThreadReply(unittest.TestCase):
             "user": "user123"
         }
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.get_message_id')
-    @patch('tools.slack_inbox_agent.process_slack_messages.is_message_processed')
-    @patch('tools.slack_inbox_agent.process_slack_messages.extract_rich_content')
-    @patch('tools.slack_inbox_agent.process_slack_messages.format_rich_content_summary')
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_idea')
-    @patch('tools.slack_inbox_agent.process_slack_messages.mark_message_processed')
-    @patch('tools.slack_inbox_agent.process_slack_messages._get_user_name')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.get_message_id')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.is_message_processed')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.extract_rich_content')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.format_rich_content_summary')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_idea')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.mark_message_processed')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages._get_user_name')
     def test_process_thread_reply_success(
         self, mock_get_user_name, mock_mark_processed, mock_create_idea,
         mock_format_summary, mock_extract_content, mock_is_processed, mock_get_id
@@ -171,8 +171,8 @@ class TestProcessThreadReply(unittest.TestCase):
         mock_create_idea.assert_called_once()
         mock_mark_processed.assert_called_once()
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.get_message_id')
-    @patch('tools.slack_inbox_agent.process_slack_messages.is_message_processed')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.get_message_id')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.is_message_processed')
     def test_process_thread_reply_already_processed(
         self, mock_is_processed, mock_get_id
     ):
@@ -211,7 +211,7 @@ class TestProcessThreadReply(unittest.TestCase):
         """Test handling reply with empty text."""
         reply_empty = {"ts": "1234567890.123456", "text": ""}
         
-        with patch('tools.slack_inbox_agent.process_slack_messages.get_message_id') as mock_get_id, \
+        with patch('task_management.tools.slack_inbox_agent.process_slack_messages.get_message_id') as mock_get_id, \
              patch('tools.slack_inbox_agent.process_slack_messages.is_message_processed') as mock_is_processed, \
              patch('tools.slack_inbox_agent.process_slack_messages.mark_message_processed') as mock_mark:
             mock_get_id.return_value = "msg_id_123"
@@ -249,7 +249,7 @@ class TestCreateNotionEntryFromClassification(unittest.TestCase):
         self.user_name = "John Doe"
         self.enhanced_text = "Test message\n\nSummary"
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_task')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_task')
     def test_create_task(self, mock_create_task):
         """Test creating a task entry."""
         mock_create_task.return_value = {
@@ -274,9 +274,9 @@ class TestCreateNotionEntryFromClassification(unittest.TestCase):
         self.assertEqual(len(result["created_items"]), 1)
         mock_create_task.assert_called_once()
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.fetch_url_metadata')
-    @patch('tools.slack_inbox_agent.process_slack_messages.infer_resource_type')
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_resource')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.fetch_url_metadata')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.infer_resource_type')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_resource')
     def test_create_resource(
         self, mock_create_resource, mock_infer_type, mock_fetch_metadata
     ):
@@ -304,7 +304,7 @@ class TestCreateNotionEntryFromClassification(unittest.TestCase):
         self.assertEqual(result["counts"]["resources"], 1)
         mock_create_resource.assert_called_once()
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_idea')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_idea')
     def test_create_idea(self, mock_create_idea):
         """Test creating an idea entry."""
         mock_create_idea.return_value = {
@@ -328,10 +328,10 @@ class TestCreateNotionEntryFromClassification(unittest.TestCase):
         self.assertEqual(result["counts"]["ideas"], 1)
         mock_create_idea.assert_called_once()
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.fetch_url_metadata')
-    @patch('tools.slack_inbox_agent.process_slack_messages.infer_resource_type')
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_resource')
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_task')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.fetch_url_metadata')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.infer_resource_type')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_resource')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_task')
     def test_create_multiple(
         self, mock_create_task, mock_create_resource, mock_infer_type, mock_fetch_metadata
     ):
@@ -374,9 +374,9 @@ class TestHandleResourceCreationRetry(unittest.TestCase):
         self.rich_content = {"links": []}
         self.channel_name = "test-channel"
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.fetch_url_metadata')
-    @patch('tools.slack_inbox_agent.process_slack_messages.infer_resource_type')
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_resource')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.fetch_url_metadata')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.infer_resource_type')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_resource')
     def test_retry_success(
         self, mock_create_resource, mock_infer_type, mock_fetch_metadata
     ):
@@ -417,7 +417,7 @@ class TestHandleResourceCreationRetry(unittest.TestCase):
         
         self.assertIsNone(result)
     
-    @patch('tools.slack_inbox_agent.process_slack_messages.create_resource')
+    @patch('task_management.tools.slack_inbox_agent.process_slack_messages.create_resource')
     def test_retry_failure(self, mock_create_resource):
         """Test retry failure."""
         mock_create_resource.side_effect = Exception("Creation failed")

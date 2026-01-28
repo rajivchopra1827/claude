@@ -213,3 +213,96 @@
 - **Organizational silos:** Poor communication lines across departments (EPD ↔ Agency teams, across Agency teams, even within teams like CS). Lack of operating mechanisms for cross-functional collaboration.
 - **Difficulty saying no:** Hard time setting realistic expectations about what can be done well in a year → risk of "wounding 100 and killing none"
 - **Under capacity:** EPD under capacity despite aggressive timelines
+
+## 7. Strategic Priority Mappings
+
+This section maps projects, terms, pods, and people to Rajiv's 5 strategic priorities.
+Use this to understand how work connects across the system.
+
+### Priority 1: Fiona 2.0 (Marketing Intelligence)
+**Also known as:** Reporting, Marketing Intelligence, CSAT initiative
+**Pod:** Reporting Pod
+**Lead:** Kelsey (Lead PM), Cassidy (Tech Lead - Engineering)
+**Related projects/work:**
+- Anything "Reporting" or "dashboard"
+- CSAT improvements
+- PMS/CRM integrations
+- Unified Fiona
+- Fiona Feature Sunsets
+- Kelsey Onboarding (she leads this initiative)
+
+**Note:** "Fiona Posts demo" is NOT Fiona 2.0 - it's a Posts demo showing Fiona integration
+
+---
+
+### Priority 2: Posts (Marketing Automation - Organic)
+**Also known as:** Organic, Social Posts, Direct Posts Product
+**Pod:** Posts Pod (gap: PM + Designer)
+**Lead:** [Open - Rajiv covering]
+**Key partners:** Michelle (Partnerships), Shannon (Director of Organic Media)
+**Related projects/work:**
+- Posts Strategy project
+- Zumper partnership/contract
+- Greystar partnership
+- Organic media work
+- "Fiona Posts demo" (this is Posts, not Fiona 2.0)
+
+---
+
+### Priority 3: AI Fulfillment (AI Evolution)
+**Also known as:** AEP, AI Evolution, Agency Enablement
+**Pod:** Agency Enablement Pod
+**Lead:** Megan (PM)
+**Agency partner:** Jenny (Director of Paid Media)
+**Related projects/work:**
+- AEP/AI Evolution Strategy project
+- PMT (Paid Media Team) transformation
+- Any "fulfillment" work
+- AI-led, human-assured delivery model
+
+---
+
+### Priority 4: Digible.AI (AI Disruption)
+**Also known as:** AI Disruption, Tiger Team, Skunkworks, AI-native DMA
+**Lead:** Rajiv (GM/Product Lead)
+**Team gaps:** Technical Lead, Multifamily Digital Marketing SME
+**Related projects/work:**
+- Anything "Digible.AI" or "AI disruption"
+- Tiger team initiatives
+- Digible Summit AI demos
+
+---
+
+### Priority 5: AI Enablement
+**Also known as:** AI Training, AI Governance, AI Tooling
+**Owner:** People team (EX) - Rajiv has context/involvement
+**Related projects/work:**
+- AI skills cohorts
+- AI governance policies
+- Org-wide AI tooling adoption
+
+---
+
+### Cross-Cutting / Foundational Work
+These projects support multiple or all strategic priorities:
+
+| Project | Supports | Notes |
+|---------|----------|-------|
+| Director of Product | All priorities | Will manage Kelsey, Megan, Melissa |
+| Q1 Kick-offs | All priorities | Planning/coordination |
+| Capacity Realignment | Personal | Rajiv's personal effectiveness |
+
+---
+
+### People → Pod → Priority Quick Reference
+
+| Person | Pod | Primary Priority |
+|--------|-----|------------------|
+| Kelsey | Reporting | Fiona 2.0 |
+| Megan | Agency Enablement | AI Fulfillment |
+| Melissa | Floats | All (Design) |
+| Cassidy | Reporting (Eng) | Fiona 2.0 |
+| Michelle | Partnerships | Posts |
+| Shannon | Organic Media | Posts |
+| Jenny | Paid Media | AI Fulfillment |
+| [Open Director] | Manages Kelsey/Megan/Melissa | All |
